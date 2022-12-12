@@ -1,0 +1,46 @@
+---
+title: "dv 2"
+output: html_document
+date: "2022-11-26"
+---
+
+`
+```{r}
+#Reading the File
+
+c<- readRDS("/Users/ashwinichoudhary/Downloads/Wasabi Data/wasabi_all_artists_3000.rds")
+
+#Counting the Gender
+c %>% count(gender)
+
+#Replacing the unamed gender by term "Unknown"
+
+c["gender"][c["gender"]==""] <- "Unknown" 
+
+# Again Counting Gender with the replaced value
+
+c %>% count(gender)
+
+```
+
+
+```{r}
+#due to limitation of dataset only including lifespan ended
+
+c2<-c %>% select(name,gender,locationInfo,lifeSpan.ended) 
+
+# Splitting Column(Location Info) with the Countries only as I want data Country wise not state wise
+
+c2$locationInfo <- sapply(strsplit(c2$locationInfo, ","), "[", 1) 
+c2
+```
+```{r}
+span<-c2 %>% select(gender,lifeSpan.ended)%>%group_by(gender)%>%count(lifeSpan.ended) #lifespan ended in ratio by gender
+span
+#Would have calculated how long the career span was but the lifespanstarted column has null or inappropriate values which would have resulted in wrong visualization hence calculating the which gender has most long running carreer.
+
+
+write_xlsx(span,"st.xlsx") #Command to export new dataframe into xlsx file for visualization
+
+```
+
