@@ -1,0 +1,11 @@
+%0 Report
+%T The Effect of Social Media on Elections: Evidence from the United States
+%I National Bureau of Economic Research, Inc
+%U https://ideas.repec.org/p/nbr/nberwo/28849.html
+%X We study how social media affects election outcomes in the United States. We use variation in the number of Twitter users across counties induced by early adopters at the 2007 South by Southwest (SXSW) festival, a key event in Twitter's rise to popularity. We show that this variation is unrelated to observable county characteristics and electoral outcomes before the launch of Twitter. Our results indicate that Twitter lowered the Republican vote share in the 2016 and 2020 presidential elections, but had limited effects on Congress elections and previous presidential elections. Evidence from survey data, primary elections, and a text analysis of millions of tweets suggests that Twitter's relatively liberal content may have persuaded voters with moderate views to vote against Donald Trump.
+%G en
+%A Fujiwara, Thomas
+%A Müller, Karsten
+%A Schwarz, Carlo
+%D 2021/05
+

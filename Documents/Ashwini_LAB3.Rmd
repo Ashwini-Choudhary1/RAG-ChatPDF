@@ -1,0 +1,189 @@
+---
+title: "LAB3-ASHWINI CHOUDHARY"
+output: html_document
+date: "2022-10-27"
+---
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+
+r<- read_delim("weight_chart.txt")
+p<-ggplot(r) #store the ggplot first to variable to scatter plot
+p+geom_point(aes(Age,Weight)) #then concatinate with the geom_point for the graph
+```
+
+```{r}
+
+p+geom_point(aes(Age, Weight),color="Blue2",size=3) #filling plots with blue color
+
+```
+
+```{r}
+
+p+geom_line(aes(Age,Weight)) #plotting the same graph by line
+```
+
+```{r}
+
+p+geom_line(aes(Age,Weight))+geom_point(aes(Age, Weight),color="Blue2",size=3) #Combining the scatter plot and line plot
+```
+
+```{r}
+data("iris")
+pr<- ggplot(iris,aes(x = Sepal.Length, y = Sepal.Width))
+pr+geom_point(aes(Sepal.Length,Sepal.Width))+geom_density_2d(aes(color = Species)) +
+  labs(subtitle = "All species") 
+
+```
+
+```{r}
+iris %>% mutate(Species = 'All') %>% bind_rows(iris) %>% ggplot(aes(x = Petal.Length, y = Petal.Width, color = Species)) + 
+  geom_point() +  geom_smooth() + facet_wrap(facets =~ Species, scales = "free") + theme_bw()
+
+pr<-ggplot(data=iris,mapping=aes(x=Petal.Length,y=Petal.Width))+    geom_point(aes(color=Species))+ geom_smooth(method="lm")
+pr1<- pr+ facet_grid(~Species)
+pr
+pr1
+
+
+```
+
+```{r}
+#plotting for mt cars data set
+
+data("mtcars")
+mt<-mtcars
+mtcars$am[mtcars$am == 0] <- "Manual"
+mtcars$am[mtcars$am == 1] <- "Automatic"
+mt_plt<- ggplot(data=mtcars,aes(x=mpg,y=qsec,size=disp,color=am))
+mt_plt+geom_point()+labs( x = "Miles Per Gallon", y = "1/4 mile time", color = "Gear", size="Displacement")
+```
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+data(diamonds)
+de<- diamonds
+de$price_mean<- mean(de$price)
+d<- ggplot(data=de,aes(x=as.factor(cut),y=price_mean,fill=color))+geom_bar(stat = 'identity')
+d+coord_polar()
+```
+
+Load the ggplot2, MASS and viridis packages. Combine the three [Pima](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/Pima.tr.html) data-sets from (MASS) and make a 2D density (density heat map) plot of bp versus bmi using scale_fill_viridis().
+
+```{r}
+library(MASS)
+library(viridis)
+data("Pima.te")
+data("Pima.tr")
+data("Pima.tr2")
+
+p1<- Pima.te
+p2<-Pima.tr
+p3<-Pima.tr2
+ptot<- rbind(p1,p2,p3) # to bind columns of the datasets
+p_plt<-ggplot(data=ptot,aes(x=bp,y=bmi))+geom_hex()+coord_fixed()+scale_fill_viridis() + theme_bw() #I used hexagonal representation for a better analysis
+p_plt
+```
+
+Exercise 8
+
+```{r}
+
+ptot_mean<- mean(ptot$bmi,na.rm= TRUE)
+ptot_sd<- sd(ptot$bmi, na.rm = TRUE)
+
+ggplot(data = ptot, aes(x = bmi)) +
+     geom_histogram(aes(y = ..density..), bins = 100) +
+    stat_function(fun = dnorm,
+                  args = list(mean = mean(ptot$bmi, na.rm = TRUE),
+                              sd = sd(ptot$bmi, na.rm = TRUE)),
+                  lwd = 1,
+                  col = 'yellow') +
+    expand_limits(x = 0)
+
+
+
+
+```
+
+```{r}
+#install.packages("plotly")
+library(plotly)
+library(ggplot2)
+library(MASS)
+data("accdeaths")
+acc_d<- accdeaths
+acc_d <- data.frame(td = as.matrix(accdeaths), yrs = as.numeric(time(accdeaths)))
+acc_max<- which.max(acc_d$td)
+acc_min<-which.min(acc_d$td)
+
+
+ggplot(acc_d, aes(x = yrs, y = td)) + #td= totaldeaths and yrs=years
+  geom_line() +
+  geom_point(data = acc_d[acc_min,], colour = "blue",size =3) +
+  geom_text(data = acc_d[acc_max,], aes(label = td)) +
+  geom_point(data = acc_d[acc_max,], colour = "red" ,size =3) +
+  geom_text(data = acc_d[acc_min,], aes(label = td)) 
+
+```
+
+```{r}
+# Exercise 10
+
+library(MASS)
+library(viridis)
+data(cats)
+plt<-ggplot(cats, aes(x = Bwt, y = Hwt)) +
+  stat_density2d(geom = "raster", aes(fill = stat(density)), contour = FALSE) 
+  fig<- plt+scale_fill_viridis() + coord_cartesian(expand = FALSE) + facet_wrap(.~ Sex) + geom_hex()+
+  geom_point(shape = '.', col = 'white') + labs(y = "Heart Weigth", x = "Body Weight")
+  
+  fig
+```
+
+```{r}
+#Exercise 14
+
+library(MASS)
+data("msleep")
+ms<- msleep
+#Plotting graph with density aplha=0.5
+
+plt_ms<-ggplot(ms, aes(x = sleep_total, fill = vore)) 
+fig<- plt_ms+geom_density(alpha = .5, n = 50) + labs(y = "Density", x = "Total sleep") 
+
+fig
+
+#Plotting same graph by changing the density variable alpha=0.9
+
+plt_ms1<-ggplot(ms, aes(x = sleep_total, fill = vore)) 
+fig1<- plt_ms1+geom_density(alpha = .9, n = 50) + labs( y = "Density", x = "Total sleep") 
+
+fig1
+```
+
+```{r}
+
+#Exercise 06
+
+# I forgot to do it after the polar bar plot thats why adding at the last professor.
+
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(ggthemes)
+data("economics")
+eco<- economics
+plt_eco<-ggplot(data = eco, aes(x = date, y = uempmed)) +scale_y_continuous(limits=c(0,25))
+
+  fig_eco<-plt_eco+geom_line() +
+  labs(y = "Median duration of Unemployment[Weeks]",
+       title = "Median duration of Unemployment[Weeks]") +  theme_economist_white() +
+scale_colour_economist() 
+  
+  fig_eco
+```
