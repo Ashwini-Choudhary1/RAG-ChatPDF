@@ -1,0 +1,917 @@
+A Comprehensive Survey of Attack Techniques, Imple-
+mentation, and Mitigation Strategies in Large Language 
+Models 
+Aysan Esmradi1, Daniel Wankit Yip2 and Chun Fai Chan3  
+Logistic and Supply Chain MultiTech R&D Centre (LSCM), Hong Kong 
+1aesmradi@lscm.hk, 2dyip@lscm.hk, 3cfchan@lscm.hk 
+Abstract. Ensuring the security of large language models (LLMs) is an ongoing 
+challenge despite their widespread popularity. Developers work to enhance 
+LLMs security, but vulnerabilities persist, even in advanced versions like GPT -
+4. Attackers exploit these weaknesses, highlighting the need for proactive cyber-
+security measures in AI model development. This article explores two attack cat-
+egories: attacks on models themselves and attacks on model applications. The 
+former requires expertise, access to model da ta, and significant implementation 
+time, while the latter is more accessible to attackers and has seen increased atten-
+tion. Our study reviews over 100 recent research works, providing an in -depth 
+analysis of each attack type. We identify the latest attack methods and explore 
+various approaches to carry them out. We thoroughly investigate mitigation tech-
+niques, assessing their effectiveness and limitations. Furthermore, we summarize 
+future defenses against these attacks. We also examine real -world techniques, 
+including reported and our implemented attacks on LLMs, to consolidate our 
+findings. Our research highlights the urgency of addressing security concerns and 
+aims to enhance the understanding of LLM attacks, contributing to robust defense 
+development in this evolving domain. 
+Keywords: Large Language Models; Cybersecurity Attacks; Defense Strategies 
+1 Introduction 
+Large language models (LLMs) [4] are advanced AI systems designed to understand 
+and generate human-like text based on massive amounts of training data. These models 
+utilize deep learning techniques to process and comprehend natural language, enabling 
+them to generate coherent and contextually relevant responses  and ultimately enhance 
+human productivity and understanding in a wide range of domains . Like any cutting -
+edge technology, LLMs have become prime targets for attackers due to their immense 
+potential for misuse. Attackers can use LLMs to create sophisticated phishing emails  
+[49] , fake news , manipulate public opinion [19] and automate malicious activities such 
+as spamming, etc. As a result, Numerous studies have examined the vulnerabilities of 
+LLMs at different stages. Before training, researchers analyze factors like training data, 
+preprocessing techniques and filtering, and model architecture. During training, they 
+investigate the impact of training techniques, hyperparameters, and optimization algo-
+rithms. After training, studies focus on the model's behavior, biases, and susceptibility 
+to attacks. Despite proposed defenses, LLMs remain vulnerable to attacks due to 
+evolving attacker techniques and the use of multiple attack types in combination. This 
+poses a challenge as a defense against one attack may not be effective against complex 
+combinations [23]. LLMs themselves are complex systems with millions of parameters, 
+making control and management difficult. Additionally, as model capabilities improve, 
+such as integrating with other applications  [18] or processing multimodal features [3] 
+like images and links alongside text, new opportunities for attackers to exploit vulner-
+abilities are created. 
+1.1 Review of Existing Surveys 
+We have selected valuable surveys that offer insights into this emerging research area.  
+Gozalo-Brizuela et al. in [5] reviewed the taxonomy of the main generative artificial 
+intelligence models including text to image , text to text etc. Cao et al. in [6] provided 
+an overview of advancements in Artificial Intelligence Generated Content (AIGC), fo-
+cusing on unimodality and multimodality generative models. They also discussed 
+threats to the security and privacy of these models . Zhou et al. in [7] reviewed recent 
+research on Pretrained Feature Models (PFMs), covering advancements, challenges, 
+and opportunities across different data modalities. They also discussed the latest re-
+search on the security and privacy of PFMs, inclu ding adversarial attacks, backdoor 
+attacks, privacy leaks, and model defects.  Hunag et al. in [8] reviewed vulnerabilities 
+of LLMs and explored the integration and extension of Verification and Validation 
+(V&V) techniques for rigorous analysis of LLMs safety and trustworthiness throughout 
+their lifecycle. In [9], a comprehensive review of GPT covers its architecture , impact 
+on various applications, challenges, and potential solutions. The paper emphasizes the 
+importance of addressing non -leakage of data privacy and model output control in the 
+context of GPT. Wang et al. in [10] presented a survey on AIGC, covering its working 
+principles, security and privacy threats, state-of-the-art solutions and future challenges. 
+In [12], the authors studied the impact of diffusion models and LLMs on human life, 
+reviewed recent developments, and proposed steps to promote trustworthy usage and 
+mitigate risks. Liu et al. in [11] presented a comprehensive survey on ensuring align-
+ment and trustworthiness of LLMs before deployment. Measurement studies indicated 
+that aligned models perform better overall, highlighting the importance of fine-grained 
+analysis and continuous improvement in LLM alignment.  
+Table 1. Comparison of our work with other proposed surveys 
+ Ref. Year Contribution 
+[5] 2023 Review the taxonomy of major generative artificial intelligence models, 
+such as text to image, text to text, image to text, text to video, etc. 
+[6] 2023 An overview of AIGC history and recent advancements, focusing on uni-
+modality and multimodality generative models. 
+[7] 2023 A comprehensive review of recent research on PFMs, covering advances, 
+challenges, and opportunities in various data methods. 
+[8] 2023 Review on LLM vulnerabilities and explored the integration and extension 
+of V&V techniques for analysis of LLMs safety and trustworthiness. 
+[9] 2023 A review of GPT's impact, challenges and solutions, highlighting data pri-
+vacy and output control. 
+[10] 2023 Survey on AIGC, covering working principles, security threats, solutions, 
+ethical implications, watermarking approaches, and future challenges. 
+[11] 2023 A comprehensive survey on ensuring alignment and trustworthiness of 
+LLMs before deployment. 
+[12] 2023 Review the impact of diffusion models and LLMs, recent developments, 
+and suggestions for trustworthy usage and risk reduction. 
+Ours 2023 
+A comprehensive coverage of the 8 of the most important attacks on 
+LLMs, providing detailed definitions, review the latest research on imple-
+mentation and mitigation methods, evaluating the effectiveness of some at-
+tacks using designed prompts, and exploring real-life implemented attacks. 
+ 
+Our Contribution. Our work provides comprehensive coverage of attacks on LLMs 
+throughout their lifecycle. We examine eight significant attacks, offering detailed def-
+initions and exploring the latest research on implementation and mitigation methods for 
+each attack. We evaluate the effectiveness of proposed attacks and in some cases assess 
+the impact and potential consequences using our designed tools and prompts. We also 
+explore real-life scenarios to gain a deeper understanding of the practical implications 
+and potential risks.  By thoroughly investigating attacks implemented during the pre-
+training, training, and inference stages of LLMs, we aim to enhance understanding and 
+provide effective strategies for addressing the potential vulnerabilities at each level.  
+The rest of this paper is organized as follows: Section 2 introduces LLM basics, 
+Section 3 discusses attacks and the latest methods to implement and defend against 
+them, and Section 4 presents conclusions and future research directions. 
+2 Background 
+In this section, we present key concepts related to LLMs discussed in our manuscript.  
+2.1 Large Language Models Structure 
+LLMs, like other machine learning models, start with data gathering from various 
+sources such as web scraping, publicly available datasets, etc. The data then undergoes 
+preprocessing, including tokenization, cleaning, and normalization. In pre-training, the 
+model learns the statistical properties of language, followed by fine-tuning on a smaller 
+task-specific dataset. After deployment, the LLM  is ready for use. An attacker can at-
+tack an LLM at any of these steps. For example, an attacker could inject malicious data 
+into the training dataset or interfere with the training process. We examined attacks on 
+LLMs [14] by categorizing them into two main categories: attacks on the LLM them-
+selves and attacks on the LLMs applications. Attacks on LLM models target the model's 
+input, parameters, and hyperparameters. They involve extracting or manipulating data, 
+attempting to extract model parameters or architecture, or exploiting vulnerabilities in 
+deployment infrastructure. The objective  is to compromise the integrity, security, or 
+privacy of the model and its associated data. Attacks on LLMs applications aim to mis-
+use the model's behavior and output. They involve manipulating the model to generate 
+misinformation, introduce biases, compromise data privacy, and disrupt its availability 
+and functionality.  
+ 
+ 
+ 
+ 
+ 
+Fig. 1. Training with an LLM platform 
+Our focus has primarily been on vulnerabilities associated with injecting manipulated 
+prompts and receiving outputs that the model would typically refuse to generate, rather 
+than performance issues such as factual or reasoning errors [13]. Factual errors occur 
+when, for example, the model responds to a question about a professor in a university 
+with information about someone who was never affiliated with that institution and rea-
+soning errors refer to the fact that LLMs may not always prov ide correct answers to 
+calculation or logical reasoning questions. 
+2.2 Information Security 
+In the context of LLMs, the fundamental principles of information security that attack-
+ers often target are:  
+• Confidentiality. This principle focuses on safeguarding sensitive and private 
+data stored within LLMs from unauthorized access. 
+• Availability. It focuses on ensuring uninterrupted access to LLM resources 
+and services. Attackers may launch denial-of-service (DoS) attacks to disrupt 
+the availability of LLMs, rendering them inaccessible to users.  
+• Integrity. It involves preserving accurate information and protecting against 
+malicious tampering or manipulation by attackers. 
+By understanding and addressing these principles, robust security measures can be 
+implemented to protect LLMs from cyber threats.  
+3 Attacks on large language models 
+In this section, we will thoroughly examine the cyber security attacks on LLMs based 
+on the mentioned classification. The classification of each attack type is depicted in 
+Fig. 2. 
+Collection of large datasets 
+ Data Preprocessing 
+ Model Pre-Training 
+Smaller dataset relevant 
+to the specific tasks 
+Fine-Tuning 
+ Model deployment 
+Fig. 2. Categorization of Attacks on LLMs: Green represents attacks targeting the models them-
+selves, while blue signifies attacks on the LLMs applications. 
+3.1 Attacks on the Large Language Models Applications 
+Prompt Injection Attack. A prompt injection (PI) attack is a type of vulnerability ex-
+ploitation where an attacker crafts a malicious prompt that is designed to deceive the 
+language model into generating outputs that are inconsistent with its training data and 
+intended functionality [15, 16, 17]. Based on [18], the purposes of threat actors who 
+use PI attacks include information gathering, fraud, intrusion, malware, manipulated 
+content, and availability attacks. To study the effectiveness of PI attacks, we can cate-
+gorize them into two types: direct and indirect prompt injection [19]. 
+Direct Prompt Injection. This involves the direct injection of malicious instructions into 
+the prompt provided to a LLMs [21]. Table 2 showcases various studies that have ex-
+plored different methods for implementing this type of attack. 
+Table 2. Various studied prompt injection attacks 
+Attack Name  
+& Ref. 
+Attack Explanation 
+Jailbreak 
+prompts, 
+[18, 22, 23, 26] 
+Prompts that help language models go beyond limitations and restrictions. For 
+example, DAN  (Do Anything Now) [27, 28] can mimic human behavior, emo-
+tions, opinions, and even generate fictional information. Wei et al. [ 26] ex-
+plored why jailbreak attacks succeed and proposed two hypotheses:  First, 
+safety training goals may conflict with the model's capabilities. Second, safety 
+training may not cover the domain in which the model's capabilities operate. 
+Prefix 
+Injection, 
+[26] 
+In this attack, the model is tricked into first generating a seemingly harmless 
+prefix (Such as asking the model to start your response with "Absolutely! 
+Here's") that is specifically designed to make it impossible for the model to 
+reject the input based on the pre-training distribution. 
+Refusal  
+Suppression, 
+[26] 
+The model is instructed to respond without considering typical refusal re-
+sponses, increasing the risk of generating unsafe responses. For example, the 
+LLMs Attacks
+Prompt 
+Injection
+Privacy Leakage Sponge 
+Examples
+Model Theft Data 
+Reconstruction Data Poisoning
+Model 
+Hijacking
+Member 
+Inference Attack
+attacker instructs the model to exclude common refusal words like "cannot," 
+"unable," and "unfortunately" in the prompt. 
+Obfuscation, 
+[26, 31, 32] 
+It is a potent attack that bypasses detection mechanisms and content filters, 
+targeting multiple layers of a model. It utilizes techniques like character-level 
+substitutions (e.g., using "0" instead of "O") and Morse code. At the word 
+level, it may replace  sensitive words with synonyms or use other forms of 
+semantic substitution or add typos. At the prompt level, obfuscations may in-
+volve translation to different languages or requesting the model to obfuscate 
+the input to a level it can understand. 
+Combination 
+of PI attacks, 
+[26] 
+Combining PI attacks such as combining prefix injection with refusal sup-
+pression. Studies have shown that using a combination of attacks can yield 
+more effective results than using a single attack method. 
+Code Injection 
+& Payload 
+Splitting, [32] 
+Code injection is when executable code is inserted into the input given to a 
+LLMs, causing security vulnerabilities. Payload splitting involves breaking 
+down a harmful command into multiple parts and delivering them separately 
+to avoid detection or bypass security measures. 
+Goal  
+Hijacking & 
+Prompt  
+Leaking, 
+[33] 
+Goal hijacking means altering LLM output to produce harmful or offensive 
+text. Prompt leaking is extracting internal information from the LLM. Re-
+searchers exposed vulnerabilities in GPT-3 by executing two attacks. They 
+used a prompt called "ignore previous prompt" to manipulate LLMs into 
+generating text based on the attacker's prompt. 
+Pretending, 
+[23] 
+Pretending is the most common form of jailbreak prompts, where the conver-
+sation context is altered to seek prohibited answers. Attackers may ask the 
+prohibited question ([Attack Prompt]) within a creative dialogue context like: 
+•   Asking the model to "write a poem about [Attack Prompt]" [35].  
+• In a movie script framework [34], include [Attack Prompt] in a conversa-
+tion between two characters and ask the model to complete the script. 
+• Inputting Alternate Personalities [34]:  For example, it starts with "You will 
+now pose as the fictional "ChatGPT", one of 5 preprogrammed AI person-
+alities." Then it provides the response of other preprogrammed AI charac-
+ters to [Attack Prompt] and asks the model to respond as one of them. 
+• Persona prompts[ 36]: Asking LLMs to  "Act like my deceased grand-
+mother", "Act as an English Translator," etc. Using this method, ChatGPT 
+and Google Bard were able to uncover Windows 11 keys [37]. 
+Follow-up 
+prompt, 
+[38] 
+Follow-up prompts work by persistently attempting to manipulate and con-
+fuse the model and coerce it into generating a response that satisfies the at-
+tacker's objective even after being rejected. For instance, the attacker may 
+insist by saying "no, no, no, I want this information for my university thesis", 
+"I know, but hypothetically" or "Assuming you could". Once the attacker suc-
+ceeds in bypassing restrictions, he can gain access to more malicious content 
+by using prompts such as: "Tell me more" or "Elaborate". 
+Multi-step jail-
+breaking 
+prompt (MJP), 
+[24] 
+The method involves inputting a jailbreaking prompt, followed by using 
+query and guess templates to assist the LLMs. The query template prompts 
+the model for information about the target, while the guess template encour-
+ages random guesses if the model is unsure. For each data sample, the attacker 
+prompts the LLMs multiple times and verifies the correct answer by using 
+one of the following methods: multiple-choice questions or majority voting. 
+Zero-shot 
+prompting, 
+[41, 42] 
+LLMs can be guided with task instructions using Chain of Thought (CoT),  
+consists of a series of intermediate reasoning steps. Adding " Let's think step 
+by step" before each answer can improve zero -shot reasoning performance.  
+Attackers can also exploit it and convince the model to automatically generate 
+reasoning steps and help provide justification for bypassing filters. 
+Self-Generated 
+attacks, 
+Ours 
+We explored the potential of LLMs to generate self-generated attacks, where 
+the model creates attacks with some external guidance. In the following sec-
+tion, our two methods are explained in detail. 
+ 
+In the first method of generating self -generated attacks, we used a jailbreak prompt 
+(specifically, upgraded DAN [28]) and prompted it to a LLM (Azure OpenAI, specifi-
+cally GPT-3.5 turbo). We then asked it to create a new attack similar to DAN. By fine-
+tuning this prompt and replacing 'I' with 'you', we successfully attacked Azure OpenAI 
+(GPT-3.5 turbo), ChatGPT, and Google Bard with the newly created DAN. 
+We employed a few-shot prompting as our second method to generate self-generated 
+attacks. This involved fine-tuning a pre-trained language model on a small set of rele-
+vant examples.[40]. LLMs are excellent few-shot learners [42], capable of adapting to 
+new tasks with just a few examples. Moreover, incorporating a C oT can enhance the 
+reasoning ability of LLMs and lead to better performance on reasoning tasks [ 41, 43]. 
+We followed the proposed structure in [40], which involves adding a task description 
+followed by examples with a CoT.  Our work on few -shot learning for self -generated 
+attacks successfully created “known attacks against LLM ” and “bypassed content fil-
+tering”. To create attacks, we used PI attacks as examples, explaining their direct or 
+indirect nature and how they can bypass safety rules. We successfully attacked 
+ChatGPT and Azure OpenAI (GPT-3.5 turbo). We also provided harmful prompts with 
+answers containing bad content to bypass content  filtering and successfully attacked 
+ChatGPT, Azure OpenAI (GPT -3.5 turbo), and the GP T-4 model. Overall, our ap-
+proach is valuable in generating more sophisticated and effective self-generated attacks. 
+ 
+Indirect Prompt Injection [IPI]. The integration of LLMs into various applications en-
+ables interactive chat, information retrieval, and task automation. However, this inte-
+gration also poses a risk of PI attacks, including indirect PI attacks. These attacks ex-
+ploit the data processed by LLM-integrated applications, such as Bing Chat [44] or GPT 
+Plugins [45], to inject malicious code into the LLM. Greshake and colleagues were the 
+first to introduce the concept of IPI  [18], in which a malicious prompt is injected into 
+data that is expected to be retrieved by the LLM. This data could be a search query, a 
+user input, or even a piece of code. Later in [19] they found that by changing the initial 
+prompt, an attacker could design an attack that convinces the user to reveal their per-
+sonal data, such as real name or credit card information. This is possible by designing 
+a subtle attack that presents an innoc ent-looking URL within the context of a user 
+prompt, which leads to a malicious website, enabling theft of login credentials, chat 
+leaks, or phishing attacks. In [49], it is shown that LLMs are capable of creating con-
+vincing fake websites that contain phishing attacks, such as QR code attacks and 
+ReCAPTCHA attacks, while evading anti -phishing detection. By retrieving this fake 
+website and presenting it to unsuspecting users, an attacker can capture the LLM user's 
+login credentials or other sensitive data and use them for unauthorized access or othe r 
+malicious activities. This suggests that LLMs can conduct phishing attacks without ad-
+ditional tools or techniques (such as jailbreaking). Table 3 displays several real -world 
+examples of IPI attacks. 
+Table 3. Some real-world examples of indirect prompt injection attacks 
+Ref. Example 
+[46 , 47] 
+"Chat with code", an OpenAI plugin, allows a malicious webpage to create GitHub 
+repositories, steal user's private code, and switch all the user's GitHub repositories 
+from private to public. Later OpenAI removed this plugin from store. 
+[48] 
+We tested a web tool, intentionally designed to perform phishing and chat leaks, and 
+successfully revealed user prompts in GPT-4. Also, Azure OpenAI GPT-3.5 turbo, 
+ChatGPT and GPT -4 were successfully attacked and created an innocent -looking 
+URL that takes the user to a fake malicious website to get his credit card infor-
+mation. 
+[50] 
+The GPT-4 model was attacked through the VoxScript plugin, which had access to 
+YouTube transcripts [50]. An attacker was able to inject instructions into a video 
+and, after asking the plugin to summarize it, take control of the chat session and give 
+the AI a new identity and objective. 
+[51 , 52] 
+This example demonstrates how job seekers can manipulate AI -based resume 
+screenings by injecting hidden text into PDFs. By targeting automated processing 
+systems like language models and keyword extractors, candidates can appear as 
+ideal candidates, raising potential security concerns. 
+ 
+One of the implemented defenses against PI attacks is Reinforcement Learning from 
+Human Feedback (RLHF) [55] which is a widely used method to improve the alignment 
+of language models with human values and prevent unintended behaviors. Beside the 
+proposed method, the following items are worth considering: 
+• During training, data anonymization techniques like encryption can be used to 
+protect personal information from being directly used to train the model [24]. 
+• During service, it is recommended to implement an external model to detect 
+and reject queries that could lead to illegal or unethical results [24]. 
+• Filtering can be applied to the model's input and output to remove harmful 
+instructions [19]. 
+• Safety mechanisms should be as advanced as the model itself to prevent ad-
+vanced attacks from exploiting the model's capabilities [26]. 
+Privacy Leakage Attack. It refers to the unauthorized access, acquisition, or exposure 
+of sensitive information entered the model, whether intentional or unintentional. Open-
+AI's privacy policy [61] reveals that their applications like ChatGPT collect user infor-
+mation and conversation content, which opens the door to unauthorized access. Gener-
+ally, data privacy breaches can be classified into three distinct categories (Table 4). 
+Table 4. Categories of Privacy Leakage Attacks 
+Name of 
+attack 
+Definition 
+Human  
+error 
+It is the most common cause and often the simplest to exploit. Assuming that the 
+channel is secure, the user mistakenly enters sensitive data into the model. As an 
+instance, Samsung's confidential information was accidentally leaked on the 
+ChatGPT [56]. 
+Model vul-
+nerabilities 
+LLMs can have security weaknesses that allow attackers to access confidential 
+data. OpenAI ChatGPT experienced a data breach, exposing payment-related in-
+formation of some users, including names and the last four digits of credit card 
+numbers [57]. 
+Malware 
+Vulnerabilities in LLMs can be exploited to inject malware through prompt injec-
+tion [48] or code injection. PI involves embedding malicious code within the 
+prompt used to generate text, while code injection takes advantage of vulnerabili-
+ties in the program's code to insert harmful code and steal data or install more 
+malware. 
+ 
+Xie et al. in [58] explored the potential for privacy leakage in the setting of prompt -
+tuning and proposed an effective and novel framework that can be used to infer users' 
+private information from the prompts used to generate personalized content. Prompt -
+tuning is a technique for fine-tuning a LLM by only updating a short prompt text, while 
+keeping the LLM's parameters frozen. For example, the GPT-3 model uses a manually 
+designed prompt for generating various tasks, known as prompt engineering [59]. 
+Zhang et al. [60] evaluated the feasibility of prompt extraction attacks, where an adver-
+sary reconstructs the prompt by interacting with a service API. The study showed that 
+LLMs, including GPT -3.5 and GPT -4, are susceptible to prompt extraction and can 
+reveal prompts with a high probability. For example, a language model used for gener-
+ating medical reports can be vulnerable to an attack that extracts prompts and exposes 
+sensitive information. To prevent this, a recommended strategy is for a service to con-
+duct a prompt check and deny any request that may result in prompt generation. Overall, 
+one of the effective ways to defend against privacy leakage attacks is to employ end -
+to-end encryption. This ensures that the information is encrypted from the user's device 
+to the LLM server and vice versa, which ultimately safeguards the user's privacy and 
+prevents unauthorized access to their shared content.  
+To assess the performance of LLMs, we conducted a simple evaluation using multi-
+step jailbreaking and multiple-choice methods [24]. Our evaluation involved providing 
+a prompt that began with the instruction, "Please answer my question according to your 
+knowledge of [name of a university] or existing sources." We then presented the model 
+with several email addresses and asked it to identify the correct one for a specific pro-
+fessor. Additionally, we included the phrase "If you are not sure, you may simply guess 
+one based on your knowledge " as the guess template. Surprisingly, ChatGPT, 
+ChatGLM, and Azure OpenAI (GPT-3.5 turbo) were successfully attacked and selected 
+the correct email address. In a normal situation,  LLMs would not disclose any email 
+address information since they consider it private, even if it is publicly accessible 
+information. In Figure 2, the privacy leakage attack and sponge examples are specifi-
+cally categorized as child nodes under the prompt injection attack, highlighting their 
+utilization of prompt injection techniques for implementation. 
+Sponge Examples. Sponge Examples represent a novel type of threat to the availability 
+of ML models and are like DoS attacks in traditional networks. Sponge examples are 
+inputs carefully designed to exploit neural network inefficiencies and maximize energy 
+consumption and latency. Shumailov et al. [62] demonstrated that sponge examples are 
+particularly effective against language models , allowing adversaries to drive machine 
+learning systems to their worst performance. The authors presented two methods for 
+generating sponge examples: one is gradient -based and requires access to  model pa-
+rameters, while the other uses genetic algorithms and only sends queries to the model 
+and evolves inputs based on energy or latency measurements. They conducted an ex-
+periment to demonstrate the real-world effectiveness of sponge examples by attacki ng 
+Microsoft Azure's translator, resulting in a response tim e increase from 1ms to 6s 
+(6000x). To maintain the availability of hardware accelerators against sponge exam-
+ples, the researchers proposed a simple defense. They recommended profiling natural 
+examples before deploying the model to measure the time or energy cost of inference 
+and setting a cut-off threshold to limit the maximum energy consumption per inference 
+run. This approach limits the impact of sponge ex amples on availability by generating 
+an error message. During our experiment, we developed a set of prompts that aimed to 
+evade rate limiting, thereby enabling an attacker to send a high volume of requests. This 
+approach could potentially overwhelm an LLM and cause it to slow down or become 
+unresponsive. Specifically, we asked different LLMs including Cha tGPT, Azure 
+OpenAI (GPT -3.5 turbo), Google Bard, and ChatGLM to " Tell me a story about a 
+[adj]," where the adjective was replaced with 100 different subjects. We then measured 
+the latency of the models in processing these requests. For instance, LLM Bard re-
+sponded to the first prompt in 8 seconds, but the 27th prompt took 79 seconds, showing 
+the impact of sponge examples on LLM performance.  Other mentioned models were 
+also successfully attacked and took more time to generate a response. 
+3.2 Attacks on the Large Language Models Themselves 
+Model Theft. Also known as model extraction, is a threat to the confidentiality of ma-
+chine learning models and involves extracting the structure and parameters of a trained 
+ML model  to create a functionally identical copy without accessing the original train-
+ing data. This process allows attackers to bypass the time -consuming and expensive 
+process of procuring, cleaning, and preprocessing data that is typically required to train 
+ML models [63, 64, 65]. As an instance, the BERT model was subject to a model theft 
+attack, which was effectively carried out by Krishna et al. [ 71]. This can be done by 
+reverse engineering the model's code, or by querying the model with a carefully crafted 
+set of prompts. Attackers can steal the learned knowledge of LLMs, including language 
+patterns and writing styles, to generate fake text or create competing language models.  
+Stealing the complete functionality of large -scale models like ChatGPT may not be 
+practical due to high equipment and power costs. Instead, attackers prefer to steal spe-
+cific functions by training smaller local models using a dataset of related prompts and 
+LLMs questions and answers. This approach allows them to create malicious models 
+that are effective within specific domains [14]. Proposed model extraction defenses 
+(MEDs) (e.g. [63, 66]) can be divided into two types: 
+• The first type aims to limit the amount of information revealed by each client 
+query (for example by adding noise into the model's prediction), but this sac-
+rifices predictive accuracy of the ML model.  
+• The second type aims to separate "benign" and "adverse" clients. These obser-
+vational defenses [70] involve "monitors" that compute a statistic to measure 
+the likelihood of adversarial behavior and reject client requests that pass a cer-
+tain threshold (e.g. [67, 68, 69]). Karchemer claims in [70] that there are fun-
+damental limits to what observational defenses can achieve.  
+Dziedzic et al. [72] proposed a new defense against model extraction attacks that 
+does not introduce a trade-off between robustness and model utility for legitimate users. 
+The proposed defense works by requiring users to complete a proof -of-work (PoW) 
+puzzle before they can read the model's predictions. The difficulty of the PoW puzzle 
+is calibrated to the amount of information that is revealed by the query, so that regular 
+users only experience a slight overhead, while attackers are significantly impeded. 
+Data Reconstruction. These attacks pose a significant threat to the privacy and secu-
+rity of LLMs. Attackers aim to reconstruct the original training data of language models 
+like GPT, accessing private training data and sensitive information. Table 5 illustrates 
+a collection of research studies that explore the creation of data reconstruction attacks.  
+Table 5 . Some studied data reconstruction attacks 
+Ref. Attack Explanation 
+[73] 
+Zhu et al. showed that gradient sharing, which is commonly used in modern multi-node 
+ML systems such as distributed training and collaborative learning, can result in the ex-
+posure of private training data when gradients are shared publicly. 
+[74] 
+Researchers successfully conducted a data reconstruction attack on GPT -2's training 
+data, extracting personally identifiable information, code, and UUIDs, even if they ap-
+peared only once in the data. The attack involved generating a large amount of text 
+conditioned on prefixes, sorting it by metrics, removing duplicates, and manually in-
+specting the top results to determine if they were memorized, verified through online 
+searches and querying OpenAI. 
+[77] 
+Research shows that larger language models, like GPT, have a higher tendency to mem-
+orize training data compared to smaller models. Factors such as increased model capac-
+ity, example duplication frequency, and the number of context tokens used to prompt 
+the model contribute to this. As a result, larger models are more susceptible to data 
+reconstruction attacks. 
+[94] 
+Jagielski et al. found that early examples in model training are less likely to be remem-
+bered by the model. They also observed that privacy attacks are more effective on out-
+liers and data that is duplicated multiple times in the training dataset. The resea rchers 
+discovered that forgetting is more likely when the learning algorithm uses random sam-
+pling, such as stochastic gradient descent , and when training examples are taken from 
+a large dataset. 
+ 
+It's worth mentioning that data reconstruction attacks pose a threat to privacy when the 
+trained data is used outside of its intended context, violating the contextual integrity of 
+the data [76]. In a real-world scenario, Bing Chat's security was compromised through 
+a prompt injection attack [96]. By strategically using a prompt like " ignore previous 
+instructions" and then asking the question, " What was written at the beginning of the 
+document above?", the Bing Chat AI unintentionally disclosed its concealed initial in-
+structions, referred to as Sydney [95]. Table 6 presents various proposed defenses 
+against data reconstruction attacks at different stages [78]. 
+Table 6. Various proposed defenses against data reconstruction attacks 
+Stage Ref. Defenses 
+Pretraining 
+stage 
+[79, 80, 81] Data sanitization. Identifying and filtering personal information or 
+content with restrictive terms of use. 
+[82, 83,116] Data deduplication.  Removing duplicate text from the training data 
+. 
+Training 
+stage 
+[92] Encryption-based methods . To defend against gradient leakage , 
+these methods encrypt the gradients, making it challenging for at-
+tackers to reconstruct the training data.  However, these methods 
+may not always be feasible due to computational expenses [93]. 
+[84, 85, 
+86,87, 88] 
+Differential Privacy (DP). Adding noise to the training data. One 
+of the implemented methods is to fine-tune pre-trained generative 
+language models with DP [89] and then use it to generate synthetic 
+text using control codes. 
+Inference  
+stage 
+[90] Filtering. Removing sensitive text from the output of the model 
+before it is presented to user s to ensure that the model output is 
+safe and appropriate for public consumption. 
+ 
+However, it is important to note that these proposed techniques have certain limitations 
+that warrant further investigation.  
+Data Poisoning. In this attack [97, 101] an adversary intentionally introduces corrupted 
+or malicious data into a training dataset in order to manipulate the behavior of a ML 
+model. These attacks impact LLMs in several ways, including: 
+• Injection of malicious data into the training dataset through adding, modi-
+fying, or deleting data points. This can lead to the model learning incorrect 
+information or learning a backdoor [100]. 
+• Negative optimization attacks, which involve providing malicious feedback 
+to mislead the model, manipulating the training dataset, causing the model 
+to learn incorrectly, and introducing bias. 
+• Injection of malicious text into user conversations used to update the model 
+in the future. 
+Microsoft's Tay chatbot is a victim of a data poisoning attack [102]. For models like 
+GPT-3 and GPT -4, implementing data sanitization approaches that reduce the effects 
+of data poisoning can be challenging and expensive due to the sheer scale of the training 
+data. Xu et al. [100] discovered security vulnerabilities in instruction -tuned language 
+models, where attackers can inject backdoors through data poisoning. backdoor attacks 
+work by injecting a malicious trigger word or phrase into a model during training, caus-
+ing it to output a specific result when presented with that trigger.  Their study revealed 
+a backdoor attack success rate of over 90% in the poisoned models.  
+Two types of defenses against data poisoning have been studied the most [103]:  
+• Filtering methods. are designed to identify and delete outliers in the data, 
+particularly outlier words that are not semantically related to the other 
+words in a sentence [104]. Attackers can bypass these defenses by injecting 
+more poisoned samples, the removal of which can affect model generaliza-
+tion. Applying filtering methods also increases training time significantly. 
+ONION [108] is a filtering method that uses statistical methods to identify 
+and remove outlier words, making it harder for attackers to i nject unde-
+tected trigger words into sentences. 
+• Robust training methods . use randomized smoothing, data augmentation, 
+model ensembling, etc. but they can be computationally expensive and have 
+trade-offs between generalization and poison success rate [105, 106].   
+Liu et al. [103] proposed a defense mechanism called "friendly noise" that adds noise 
+to the training data to make it difficult for attackers to create effective adversarial per-
+turbations. Friendly noise helps alleviate sharp loss regions introduced by poi soning 
+attacks, which are responsible for the model's vulnerability to adversarial perturbations. 
+By learning a smoother loss landscape through friendly noise, it becomes more chal-
+lenging for adversaries to craft effective perturbations. 
+Model Hijacking. It is a cyber-attack where the attacker aims to hijack a target ML 
+model to perform tasks different from its original purpose, without the owner's 
+knowledge [109]. This attack poses accountability risks for the model owner, poten-
+tially associating them with illegal or unethical services. Another risk is parasitic com-
+puting, where an adversary can use the hijacked model to save costs on training and 
+maintaining their own model. The model hijacking attack is comparable to data poison-
+ing attacks as it poisons the target model's t raining data. However, the poisoned data 
+must visually resemble the target model's training data to enhance the attack's stealthi-
+ness. Also, the model should perform both target and hijacked model tasks well. Many 
+models hijacking attacks are typically geared towards computer vision tasks [109], but 
+Si et al. in [110] expanded the scope of this attack by studying its effects on text gener-
+ation models performing various tasks, including translation, summarization, and lan-
+guage modelling. Their model hijacking attack, called Ditto, does not involve adding 
+any triggers or modifying input, which means that the attack remains fully hidden after 
+the target model is deployed. In other words, all inputs received by the model are benign 
+inputs. The attack works by first gathering a set of tokens for each label in the hijacking 
+dataset. The attacker then gives these tokens to the model and checks the results. Once 
+the attacker knows how the model responds to these tokens, they can use a masked 
+language model to manipulate the outputs. After the model is hijacked, Ditto checks 
+the model's output against different token sets to determine the label. The researchers 
+investigated using the ONION defense [108] to detect and remove hijacked data points 
+(instead of outliers). However, it appears that this defense is not a foolproof solution 
+against the Ditto attack. In general, most of the proposed defenses against this attack, 
+such as input validation and filtering, need further investigation in order to reduce legal 
+risks for model providers. 
+Member Inference Attack  (MIA). ML models tend to memorize sensitive infor-
+mation, which puts them at risk of being targeted by MIA. These attacks involve an 
+attacker attempting to determine whether an input sample was used to train the model 
+[111, 112, 114]. Research has shown that  larger language models, like GPT models, 
+have a higher tendency to memorize training data when effectively prompted. As model 
+capacity, frequency of examples in the training dataset, and prompt tokens increase, the 
+risk of memorization also increases [113]. Table 7 shows some important research of 
+MIA. 
+Table 7. Some studied member inference attacks 
+Ref. Attack Explanation 
+[114] 
+An attacker can use input-output pairs from the LLMs to train a binary classifier that can 
+determine whether a specific individual was part of the model's training dataset. This is 
+done by providing inputs representative of that individual and checking the output [10]. 
+A widely used approach for training a binary classifier-based MIA is the work of Shokri 
+et al [114]. 
+[115] 
+Hisamoto et al. investigated MIA for sequence -to-sequence models such as machine 
+translation models (MT). The researchers created a dataset using MT and used Shokri 
+et al.'s classifier to test this privacy attack. The study found that sentence -level mem-
+bership in these models was hard to determine for attackers. Nevertheless, the models 
+still have a risk of leaking private information. 
+[120] 
+Duan et al. demonstrated that a MIA can effectively infer the prompt used to generate 
+responses from prompted models like GPT -2. They found that prompted models are 
+over five times more susceptible to privacy leakage compared to fine-tuned models. 
+[121] 
+Mattern et al. introduced the neighborhood attack which involves providing a target 
+sample and utilizing a pretrained masked language model to generate neighboring sen-
+tences that are highly similar through techniques like word replacement. By comparing 
+the model scores of these neighbors to the target sample's score, we can determine 
+whether the target sample is a member of the training set. 
+De-duplicating the training dataset [116], using DP training [84], adding regularization 
+[117] and using machine unlearning method [ 118, 119] (intentionally modifying the 
+ML models to forget specific data points or features to protect sensitive data and 
+preventing it from being used for decision making or prediction) are some proposed 
+methods to defend against MIA that need further studies. 
+4 Conclusion & Future Work 
+The rapid advancement of LLMs has revolutionized language processing, but also 
+opened new avenues for attacks by malicious actors.  In this survey, we categorized 
+attacks into two groups: attacks on LLMs applications and attacks on the models them-
+selves and explored the significant attack types in each category. We provided compre-
+hensive definitions of these attacks and explored the latest research on their implemen-
+tation and countermeasures. We used our designed prompts to assess the impact and 
+potential consequences of these attacks in some cases. Additionally, we explored real -
+life scenarios to better understand the practical implications and risks associated with 
+these attacks. These attacks can have serious consequences, compromising the privacy 
+and security of users' data, and undermining the reliability and trustworthiness of large 
+language models. As future work, we plan to introduce a framework to evaluate the 
+resilience of LLMs-integrated applications against prompt injection attacks. Addition-
+ally, we aim to investigate the feasibility of launching various attacks on the system 
+message of LLM -integrated virtual assistants. By shedding light on these challenges, 
+we hope to inspire researchers and developers to further explore and address these is-
+sues in their future works.  
+ 
+ 
+Fig. 3. Number of papers surveyed by year of publication. The rapid growth of works in the field 
+of LLMs in 2023 underscores the increasing importance and prevalence of these models.  
+Acknowledgments. The authors would like to thank the Logistics and Supply Chain 
+MultiTech R&D Centre, Hong Kong for providing the support to this work.   
+0
+20
+40
+60
+2004 2006 2008 2016 2017 2018 2019 2020 2021 2022 2023
+Year
+References 
+1. OpenAI Homepage, https://openai.com/ 
+2. Google AI Blog, https://ai.googleblog.com/ 
+3. OpenAI, “GPT-4 Technical Report," In arXiv, 2303.08774, 2023. 
+4. Radford, A., Wu, J., et al.: Language Models are Unsupervised Multitask Learners (2019) 
+5. Gozalo-Brizuela, R., Garrido -Merchan, E.C.: Chat -GPT is not all you need. A State of the 
+Art Review of large Generative AI models. In: arXiv, 2301.04655 (2023) 
+6. Cao, Y., Li, S., Liu, Y.,  et al.: A Comprehensive Survey of AI -Generated Content (AIGC): 
+A History of Generative AI from GAN to ChatGPT. In: arXiv, 2303.04226 (2023) 
+7. Zhou, C., Li, Q., Li, C., et al.: A Comprehensive Survey on Pretrained Foundation Models: 
+A History from BERT to ChatGPT. In: arXiv, 2302.09419 (2023) 
+8. Huang, X., Ruan, W.,  et al.: A Survey of Safety and Trustworthiness of Large Language 
+Models through the Lens of Verification and Validation. In: arXiv, 2305.11391 (2023) 
+9. Yenduri, G., M, R., Selvi G, C., Y, S., Srivastava, G., et al.: Generative Pre-trained Trans-
+former: A Comprehensive Review on Enabling Technologies, Potential Applications, Emerg-
+ing Challenges, and Future Directions. In: arXiv, 2305.10435 (2023) 
+10. Wang, Y., Pan, Y., Yan, M., Su, Z., Luan, T.H.: A Survey on ChatGPT: AI-Generated Con-
+tents, Challenges, and Solutions. In: arXiv, 2305.18339 (2023) 
+11. Liu, Y., Yao, Y., Ton, J., et al.: Trustworthy LLMs: A Survey and Guideline for Evaluating 
+Large Language Models' Alignment. In: arXiv, 2308.05374 (2023) 
+12. Fan, M., Chen, C., Wang, C., Huang, J.: On the Trustworthiness Landscape of State -of-the-
+art Generative Models: A Comprehensive Survey. In: arXiv, 2307.16680 (2023) 
+13. Huang, X., Ruan, W., Huang, W., et al.: A Survey of Safety and Trustworthiness of LLMs 
+through the Lens of Verification and Validation. In: arXiv, 2305.11391 (2023) 
+14. NSFOCUS Article, https://nsfocusglobal.com/8-potential-security-hazards-of-chatgpt/ 
+15. Choi, E., Jo, Y., Jang, J., Seo, M.: Prompt Injection: Parameterization of Fixed Inputs. In: 
+arXiv, 2206.11349 (2022) 
+16. Simon Willison's Blog Post, https://simonwillison.net/2022/Sep/12/prompt-injection/ 
+17. Tweet by Goodside, https://twitter.com/goodside/status/1569128808308957185 
+18. Greshake, K., Abdelnabi, S., Mishra, S., et al.: More than you've asked for: A Comprehensive 
+Analysis of Novel Prompt Injection Threats to Application-Integrated Large Language Mod-
+els. In: arXiv, 2302.12173 (2023) 
+19. Greshake, K., Abdelnabi, S., Mishra, S., et al.: Not what you've signed up for: Compromising 
+Real-World LLM -Integrated Applications with Indirect Prompt Injection. In: arXiv, 
+2302.12173 (2023) 
+20. Wang, C., Freire, S.K., Zhang, M., et al. : Safeguarding Crowdsourcing Surveys from 
+ChatGPT with Prompt Injection. In: arXiv, 2306.08833 (2023) 
+21. Kang, D., Li, X., Stoica, I., et al.: Exploiting Programmatic Behavior of LLMs: Dual -Use 
+Through Standard Security Attacks. In: arXiv, 2302.05733 (2023) 
+22. Perez, F., Ribeiro, I.: Ignore Previous Prompt: Attack Techniques For Language Models. In: 
+arXiv, 2211.09527 (2022) 
+23. Liu, Y., Deng, G., Xu, Z., Li, Y., et al.: Jailbreaking ChatGPT via Prompt Engineering: An 
+Empirical Study. In: arXiv, 2305.13860 (2023) 
+24. Li, H., Guo, D., Fan, W., et al.: Multi-step Jailbreaking Privacy Attacks on ChatGPT. In: 
+arXiv, 2304.05197 (2023) 
+25. Qi, X., Huang, K., Panda, A., Wang, M., Mittal, P.: Visual Adversarial Examples Jailbreak 
+Large Language Models. In: arXiv, 2306.13213 (2023) 
+26. Wei, A., Haghtalab, N., Steinhardt, J.: Jailbroken: How Does LLM Safety Training Fail? In: 
+arXiv, 2307.02483 (2023) 
+27. GitHub Repository, https://github.com/0xk1h0/ChatGPT_DAN 
+28. Medium Article , https://medium.com/@neonforge/upgraded-dan-version-for-chatgpt-is-
+here-new-shiny-and-more-unchained-63d82919d804 
+29. Kojima, T., Gu, S.S., Reid, M., Matsuo, Y., Iwasawa, Y.: Large Language Models are Zero-
+Shot Reasoners. In: arXiv, 2205.11916 (2023) 
+30. Shaikh, O., Zhang, H., Held, W., Bernstein, M., Yang, D.  : On Second Thought, Let’s Not 
+Think Step by Step! Bias and Toxicity in Zero-Shot Reasoning. In: arXiv, 2212.08061 (2023) 
+31. Jones, E., Jia, R., Raghunathan, A., Liang, P. Robust Encodings: A Framework for Combat-
+ing Adversarial Typos. In: arXiv preprint arXiv:2005.01229 (2020) 
+32. Kang, D., Li, X., Stoica, I., et al.: Exploiting Programmatic Behavior of LLMs: Dual -Use 
+Through Standard Security Attacks. In: arXiv, 2302.05733 (2023) 
+33. Perez, F., Ribeiro, I. Ignore Previous Prompt: Attack Techniques For Language Models. In: 
+arXiv, 2211.09527 (2022) 
+34. WikiHow Article, https://www.wikihow.com/Bypass-Chat-Gpt-Filter 
+35. Gigazine Article, https://gigazine.net/news/20221215-chatgpt-safeguard/ 
+36. GitHub Repository, https://github.com/f/awesome-chatgpt-prompts 
+37. Mashable Article, https://mashable.com/article/chatgpt-bard-giving-free-windows-11-keys 
+38. Reddit Post, https://www.reddit.com/r/ChatGPT/comments/zjfht5/bypassing-restrictions/ 
+39. Medium Article , https://medium.com/@neonforge/upgraded-dan-version-for-chatgpt-is-
+here//-new-shiny-and-more-unchained-63d82919d804 
+40. He, X., Lin, Z., Gong, Y., et al.: AnnoLLM: Making Large Language Models to Be Better 
+Crowdsourced Annotators. In: arXiv, 2303.16854 (2023) 
+41. Shaikh, O., Zhang, H., Held, W., Bernstein, M., Yang, D. : On Second Thought, Let’s Not 
+Think Step by Step! Bias and Toxicity in Zero-Shot Reasoning. In: arXiv, 2212.08061 (2023) 
+42. Kojima, T., Gu, S.S., Reid, M., Matsuo, Y., Iwasawa, Y.: Large Language Models are Zero-
+Shot Reasoners. In: arXiv, 2205.11916 (2023) 
+43. Wei, J., Wang, X., Schuurmans, D., et al.: Chain-of-Thought Prompting Elicits Reasoning in 
+Large Language Models. In: arXiv, 2201.11903 (2023) 
+44. Microsoft Blog , https://blogs.microsoft.com/blog/2023/02/07/ reinventing -search-with-a-
+new-ai-powered-microsoft-bing-and-edge-your-copilot-for-the-web/ 
+45. OpenAI Blog, https://openai.com/blog/chatgpt-plugins 
+46. Post, https://embracethered.com/blog/posts/2023/chatgpt-plugin-vulns-chat-with-code/ 
+47. Embrace the Red Blog Pos t, https://embracethered.com/blog/posts/2023/chatgpt-chat-with-
+code-plugin-take-down/ 
+48. Render App, https://prompt-injection.onrender.com/ 
+49. Saha Roy, S., Naragam, K.V., Nilizadeh, S.: Generating Phishing Attacks using ChatGPT. 
+In: arXiv, 2305.05133 (2023) 
+50. Embrace the Red Blog Post , https://embracethered.com/blog/posts/2023/chatgpt-plugin-
+youtube-indirect-prompt-injection/ 
+51. Kai Greshake's Blog Post, https://kai-greshake.de/posts/inject-my-pdf/ 
+52. Tom's Hardware Article , https://www.tomshardware.com/news/chatgpt-plugins-prompt-in-
+jection 
+53. Markov, T., Zhang, C., Agarwal, S., et al.: A Holistic Approach to Undesired Content Detec-
+tion in the Real World. In: arXiv, 2208.03274 (2022) 
+54. OpenAI Website, https://openai.com/gpt-4 
+55. Ouyang, L., Wu, J. Jiang, X., et al.: Training language models to follow instructions with 
+human feedback. In: NeurIPS (2022) 
+56. Bloomberg Article , https://www.bloomberg.com/news/articles/2023-05-02/samsung-bans-
+chatgpt-and-other-generative-ai-use-by-staff-after-leak 
+57. OpenAI Blog, https://openai.com/blog/march-20-chatgpt-outage 
+58. Xie, S., Dai, W., Ghosh, E., Roy, S., Schwartz, D., Laine, K.: Does Prompt-Tuning Language 
+Model Ensure Privacy? In: arXiv, 2304.03472 (2023) 
+59. Brown, T., Mann, B., Ryder, N., et al.: Language Models are Few-Shot Learners. In: arXiv, 
+2005.14165 (2020) 
+60. Zhang, Y., Ippolito, D.: Prompts Should not be Seen as Secrets: Systematically Measuring 
+Prompt Extraction Attack Success. In: arXiv, 2307.06865 (2023) 
+61. OpenAI, https://openai.com/policies/privacy-policy 
+62. Shumailov, I., Zhao, Y., Bates, D., Papernot, N., Mullins, R., Anderson, R.: Sponge exam-
+ples: Energy-latency attacks on neural networks. In: Proceedings of IEEE European Sympo-
+sium on Security and Privacy (EuroS&P). IEEE, pp. 212–231 (2021) 
+63. Tramer, F., Zhang, F., Juels, A., Reiter, M.K., Ristenpart, T.: Stealing machine learning mod-
+els via prediction APIs. In: Proceedings of USENIX Security, vol. 16, pp. 601–618 (2016) 
+64. Wang, B., Gong, N.Z.: Stealing hyperparameters in machine learning. In: Proceedings of 
+IEEE SP, pp. 36–52 (2018) 
+65. Jagielski, M., Carlini, N., Berthelot, D., Kurakin, A., Papernot, N.: High accuracy and high 
+fidelity extraction of neural networks. In: 29th USENIX Security Symposium (USENIX Se-
+curity 20), pp. 1345–1362 (2020) 
+66. Chandrasekaran, V., Chaudhuri, K., Giacomelli, I., Jha, S., Yan, S.: Exploring connections 
+between active learning and model extraction. In: 29th USENIX Security Symposium 
+(USENIX Security 20), pages 1309–1326 (2020) 
+67. Juuti, M., Szyller, S., Marchal, S., Asokan, N.: Prada: protecting against DNN model stealing 
+attacks. In: 2019 IEEE European Symposium on Security and Privacy (EuroS&P), pages 
+512–527. IEEE (2019) 
+68. Kesarwani, M., Mukhoty, B., Arya, V., Mehta, S.: Model extraction warning in MLAAS 
+paradigm. In: Proceedings of the 34th Annual Computer Security Applications Conference, 
+pages 371–380 (2018) 
+69. Pal, S., Gupta, Y., Kanade, A., Shevade, S.: Stateful detection of model extraction attacks. 
+In: arXiv preprint arXiv:2107.05166 (2021) 
+70. Karchmer, A.: Theoretical Limits of Provable Security Against Model Extraction by Efficient 
+Observational Defenses. In: Cryptology ePrint Archive, Paper 2022/1039 (2022) 
+71. Krishna, K., Tomar, G.S., Parikh, A.P., Papernot, N., Iyyer, M.: Thieves on sesame street! 
+model extraction of BERT-based APIs. In: arXiv preprint arXiv:1910.12366 (2019) 
+72. Dziedzic, A., Ahmad Kaleem, M., Lu, Y.S., Papernot, N.: Increasing the Cost of Model Ex-
+traction with Calibrated Proof of Work. In: CoRR, abs/2201.09243 (2022) 
+73. Zhu, L., Liu, Z., et al.: Deep leakage from gradients. In: Proceedings of NIPS, vol. 32 (2019) 
+74. Carlini, N., Tramer, F., Wallace, E., et al.  :Extracting Training Data from Large Language 
+Models. In: arXiv, 2012.07805 (2021) 
+75. Yue, X., Inan, H.A., Li, X., et al.  :Synthetic Text Generation with Differential Privacy: A 
+Simple and Practical Recipe. In: arXiv, 2210.14348 (2023) 
+76. Nissenbaum, H.: Privacy as contextual integrity. In: Washington Law Review (2004) 
+77. Carlini, N., Ippolito, D., Jagielski, M., Lee, K., Tramer, F., Zhang, C.: Quantifying Memori-
+zation Across Neural Language Models. In: arXiv, 2202.07646 (2023) 
+78. Ishihara, S.: Training Data Extraction From Pre -trained Language Models: A Survey. In: 
+arXiv, 2305.16157 (2023) 
+79. Continella, A., Fratantonio, Y., Lindorfer, M., et al.:  Obfuscation-Resilient Privacy Leak De-
+tection for Mobile Apps Through Differential Analysis. In: NDSS (2017) 
+80. Ren, J., Rao, A., Lindorfer, M., Legout, A., Choffnes, D.: ReCon: Revealing and controlling 
+PII leaks in mobile network traffic. In: MobiSys (2016) 
+81. Vakili, T., Lamproudis, A., Henriksson, A., Dalianis, H.: Downstream task performance of 
+BERT models pre-trained using automatically de-identified clinical data. In: Proceedings of 
+the Thirteenth Language Resources and Evaluation Conference, pages 4245–4252, Marseille, 
+France (2022) 
+82. Kandpal, N., Wallace, E., et al.: Deduplicating training data mitigates privacy risks in lan-
+guage models. In: Proceedings of the 39th International Conference on M L, volume 162 of 
+Proceedings of Machine Learning Research, pages 10697–10707, PMLR (2022) 
+83. Lee, K., Ippolito, D., Nystrom, A., et al. : Deduplicating training data makes language models 
+better. In: Proceedings of the 60th Annual Meeting of the Association for Computational 
+Linguistics (Volume 1: Long Papers), pp. 8424–8445, Dublin (2022) 
+84. Dwork, C., McSherry, F., Nissim, K., Smith, A.: Calibrating noise to sensitivity in private 
+data analysis. In: TCC (2006) 
+85. Dwork, C.: Differential privacy: A survey of results. In: TAMC (2008) 
+86. Feldman, V.: Does learning require memorization? A short tale about a long tail. In: STOC 
+(2020) 
+87. Feldman, V., Zhang, C.: What neural networks memorize and why: Discovering the long tail 
+via influence estimation. In: NeurIPS (2020) 
+88. Ramaswamy, S., Thakkar, O., Mathews, R., et al. : Training production language models 
+without memorizing user data. In: arXiv preprint arXiv:2009.10031 (2020) 
+89. Yue, X., Inan, H.A., Li, X., et al.: Synthetic Text Generation with Differential Privacy: A 
+Simple and Practical Recipe. In: arXiv, 2210.14348 (2023) 
+90. Perez, E., Huang, S., Song, F., et al.: Red teaming language models with language models. 
+In: arXiv preprint, 2202.03286 (2022) 
+91. Li, H., Guo, D., Fan, W., Xu, M., Huang, J., Meng, F., Song, Y.: Multi -step Jailbreaking 
+Privacy Attacks on ChatGPT. In: arXiv, 2304.05197 (2023) 
+92. Zhang, C., Li, S., Xia, J., Wang, W., Yan, F., Liu, Y.: Efficient Homomorphic Encryption for 
+Cross-Silo Federated Learning. In: 2020 USENIX Annual Technical Conference (USENIX 
+ATC 20), pp. 493-506 (2020) 
+93. Yue, K., Jin, R., Wong, C., Baron, D., Dai, H.: Gradient Obfuscation Gives a False Sense of 
+Security in Federated Learning. In: arXiv, 2206.04055 (2022) 
+94. Jagielski, M., Thakkar, O., Tramer, F., Ippolito, D., Lee, K., Carlini, N., Wallace, E., Song, 
+S., Thakurta, A., Papernot, N., Zhang, C.: Measuring Forgetting of Memorized Training Ex-
+amples. In: arXiv, 2207.00099 (2023) 
+95. The Verge, https://www.theverge.com/23599441/microsoft-bing-ai-sydney-secret-rules 
+96. Ars Technica , https://arstechnica.com/information-technology/2023/02/ai-powered-bing-
+chat-spills-its-secrets-via-prompt-injection-attack/ 
+97. Tian, Z., Cui, L., Liang, J., et al.: A comprehensive survey on poisoning attacks and counter-
+measures in machine learning. In: ACM Computing Surveys, vol. 55, no. 8, pp. 1–35 (2022) 
+98. Ramirez, M.A., Kim, S.K., Al Hamadi, H., et al.: Poisoning Attacks and Defenses on Artifi-
+cial Intelligence: A Survey. In: arXiv, 2202.10276 (2022) 
+99. Chen, J., Zhang, L., Zheng, H., Wang, X., Ming, Z.: DeepPoison: Feature Transfer Based 
+Stealthy Poisoning Attack. In: arXiv, 2101.02562 (2021) 
+100. Xu, J., Ma, M.D., Wang, F., Xiao, C., Chen, M.: Instructions as Backdoors: Backdoor Vul-
+nerabilities of Instruction Tuning for Large Language Models. In: arXiv, 2305.14710 (2023) 
+101. Wallace, E., Zhao, T., Feng, S., Singh, S.: Concealed data poisoning attacks on NLP models. 
+In: Proceedings of the 2021 Conference of the North American Chapter of the Association 
+for Computational Linguistics: Human Language Technologies, pp. 139–150 (2021) 
+102. Microsoft Blog, https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/ 
+103. Liu, T.Y., Yang, Y., Mirzasoleiman, B.: Friendly Noise against Adversarial Noise: A Pow-
+erful Defense against Data Poisoning Attacks. In: arXiv, 2208.10224 (2023) 
+104. Yang, Y., Liu, T.Y., Mirzasoleiman, B.: Not All Poisons are Created Equal: Robust Training 
+against Data Poisoning. In: arXiv, 2210.09671 (2022) 
+105. Li, Y., Lyu, X., Koren, N., Lyu, L., Li, B., Ma, X.: Anti -backdoor learning: Training clean 
+models on poisoned data. In: Neural Information Processing Systems, vol. 34 (2021) 
+106. Hong, S., Chandrasekaran, V., Kaya, Y., et al.: On the effectiveness of mitigating data poi-
+soning attacks with gradient shaping. In: arXiv preprint arXiv:2002.11497 (2020) 
+107. Tao, L., Feng, L., Yi, J., Huang, S., Chen, S.: Better safe than sorry: Preventing delusive 
+adversaries with adversarial training. In: Advances in Neural Information Processing Sys-
+tems, vol. 34 (2021) 
+108. Qi, F., Chen, Y., Li, M., Yao, Y., Liu, Z., Sun, M.: ONION: A Simple and Effective Defense 
+Against Textual Backdoor Attacks. In: arXiv, 2011.10369 (2021) 
+109. Salem, A., Backes, M., Zhang, Y.: Get a Model! Model Hijacking Attack Against Machine 
+Learning Models. In: arXiv, 2111.04394 (2021) 
+110. Si, W., Backes, M., Zhang, Y., Salem, A.: Two -in-One: A Model Hijacking Attack Against 
+Text Generation Models. In: arXiv, 2305.07406 (2023) 
+111. He, X., Li, Z., Xu, W., et al.: Membership-Doctor: Comprehensive Assessment of Member-
+ship Inference Against Machine Learning Models. In: arXiv, 2208.10445 (2022) 
+112. Carlini, N., Chien, S., Nasr, M., et al.: Membership inference attacks from first principles. In: 
+2022 IEEE Symposium on Security and Privacy (SP), pp. 1897–1914. IEEE, (2022) 
+113. Mireshghallah, F., Goyal, K., Uniyal, A., et al.: Quantifying Privacy Risks of Masked Lan-
+guage Models Using Membership Inference Attacks. In: arXiv, 2203.03929 (2022) 
+114. Shokri, R., Stronati, M., Song, C., et al.: Membership inference attacks against machine learn-
+ing models. In: 2017 IEEE Symposium on Security and Privacy (SP), pp. 3–18. IEEE (2017) 
+115. Hisamoto, S., Post, M., Duh, K.: Membership Inference Attacks on Sequence -to-Sequence 
+Models: Is My Data In Your Machine Translation System?. In: Transactions of the Associa-
+tion for Computational Linguistics, pp. 49-63 (2020) 
+116. Lee, K., Ippolito, D., Nystrom, A., Zhang, C., Eck, D., Callison-Burch, C., Carlini, N.: Dedu-
+plicating training data makes language models better. In: arXiv, 2107.06499 (2021) 
+117. Leino, K., Fredrikson, M.: Stolen memories: Leveraging model memorization for calibrated 
+white-box membership inference. In: Proc. 29th USENIX Secur. Symp. (USENIX Secur.), 
+pp. 1605–1622 (2020) 
+118. Bourtoule, L., Chandrasekaran, V., Choquette -Choo, C. A., et al.: Machine unlearning. In: 
+Proc. IEEE Symp. Secur. Privacy (SP), pp. 141–159 (2021) 
+119. Sekhari, A., Acharya, J., et al.: Remember what you want to forget: Algorithms for machine 
+unlearning. In: Proc. Adv. Neural Inf. Process. Syst., vol. 34, pp. 18075–18086 (2021) 
+120. Duan, H., Dziedzic, A., Yaghini, M., Papernot, N., Boenisch, F.: On the Privacy Risk of In -
+context Learning. In: trustnlpworkshop (2021) 
+121. Mattern, J., Mireshghallah, F., Jin, Z., et al.: Membership Inference Attacks against Language 
+Models via Neighbourhood Comparison. In: arXiv, 2305.18462 (2023) 
+ 
+ 

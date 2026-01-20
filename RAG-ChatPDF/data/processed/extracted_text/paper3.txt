@@ -1,0 +1,1146 @@
+Received 29 June 2024, accepted 10 August 2024, date of publication 26 August 2024, date of current version 17 September 2024.
+Digital Object Identifier 10.1 109/ACCESS.2024.3450388
+A Security Risk Taxonomy for Prompt-Based
+Interaction With Large Language Models
+ERIK DERNER
+ 1,2, KRISTINA BATISTIČ 3, JAN ZAHÁLKA
+ 2,
+AND ROBERT BABUŠKA
+ 2,4, (Member, IEEE)
+1ELLIS Alicante, 03001 Alicante, Spain
+2Czech Institute of Informatics, Robotics, and Cybernetics, Czech Technical University in Prague, 160 00 Prague, Czech Republic
+3Independent Researcher, 1000 Ljubljana, Slovenia
+4Department of Cognitive Robotics, Delft University of Technology, 2628 CD Delft, The Netherlands
+Corresponding author: Erik Derner (erik.derner@cvut.cz)
+The work of Erik Derner was supported in part by a nominal grant received at the ELLIS Unit Alicante Foundation from the Regional
+Government of V alencia in Spain (Convenio Singular signed with Generalitat V alenciana, Conselleria de Innovación, Industria, Comercio y
+Turismo, Dirección General de Innovación); in part by Intel Corporation; and in part by European Union’s Horizon 2020 Research and
+Innovation Programme under Grant 951847. The work of Jan Zahálka and Robert Babuška was supported by European Union’s Horizon
+Europe Research and Innovation Programme under Grant 101070254 CORESENSE, and in part by European Union through the project
+ROBOPROX under Grant CZ.02.01.01/00/22_008/0004590.
+ABSTRACT As large language models (LLMs) permeate more and more applications, an assessment of their
+associated security risks becomes increasingly necessary. The potential for exploitation by malicious actors,
+ranging from disinformation to data breaches and reputation damage, is substantial. This paper addresses a
+gap in current research by specifically focusing on security risks posed by LLMs within the prompt-based
+interaction scheme, which extends beyond the widely covered ethical and societal implications. Our work
+proposes a taxonomy of security risks along the user-model communication pipeline and categorizes the
+attacks by target and attack type alongside the commonly used confidentiality, integrity, and availability
+(CIA) triad. The taxonomy is reinforced with specific attack examples to showcase the real-world impact
+of these risks. Through this taxonomy, we aim to inform the development of robust and secure LLM
+applications, enhancing their safety and trustworthiness.
+INDEX TERMS Large language models, security, jailbreak, natural language processing.
+I. INTRODUCTION
+Large language models (LLMs) have taken the world
+by storm, revolutionizing workflows across many applied
+knowledge domains. LLMs are natural language processing
+models trained on vast amounts of data, capable of generating
+coherent and meaningful textual outputs. The most famous
+example of an LLM architecture is the Generative Pre-trained
+Transformer (GPT) series by OpenAI.
+GPT uses transformers [1] pre-trained on massive amounts
+of text data using unsupervised learning. Once pre-trained,
+GPT can be fine-tuned for tasks such as question answering,
+sentiment analysis, or machine translation. The flagship
+example of a pioneer tool using GPT is ChatGPT [2], whose
+The associate editor coordinating the review of this manuscript and
+approving it for publication was Agostino Forestiero
+.
+prowess and versatility in generating human-like responses
+to natural language queries has penetrated applications such
+as content creation, text summarization, and software code
+generation. With the release of additional LLM-based tools,
+such as Anthropic’s Claude and Google’s Gemini, we can
+assume LLMs are here to stay. Alongside their surging
+importance, there is a growing concern about LLMs’ security
+risks.
+One of the main LLM security concerns is posed by
+prompt-based attacks, in which attackers achieve their
+intended malicious outcome solely by manipulating the
+prompt(s) and/or response(s) flowing between the LLM and
+its users. The LLM itself is left intact, the attacker requires
+no knowledge of the model’s architecture, its parameters,
+or access to the machines the model resides on. Note that this
+greatly lowers the barrier of entry for the attackers. Crafting
+126176
+
+ 2024 The Authors. This work is licensed under a Creative Commons Attribution 4.0 License.
+For more information, see https://creativecommons.org/licenses/by/4.0/ VOLUME 12, 2024
+E. Derner et al.: Security Risk Taxonomy for Prompt-Based Interaction With LLMs
+traditional adversarial attacks requires non-trivial security
+knowledge and a degree of technical prowess, but a prompt-
+based attack merely requires the attacker to strategically
+manipulate the interactions with the LLM.
+FIGURE 1. Examples of prompt-based attacks. Malicious behavior and
+outcomes are colored red.
+In this paper, we address this topic by focusing on
+prompt security: the discipline of protecting LLMs and
+their users from prompt-based attacks by malicious actors.
+Good prompt security directly increases robustness, builds
+trust, and significantly contributes to transforming LLMs
+from experimental prototypes to reliable tools. In recent
+literature, there has been a growing body of works on safety,
+societal, and ethical topics related to LLMs: for instance,
+biases and discrimination [3], [4], [5], societal and economic
+harm [6], or the impact on academia [7]. These resources are
+highly relevant to the broader safety and robustness objective.
+Still, to the best of our knowledge, the specific topic of
+prompt security risks of LLMs has not yet been covered
+systematically.
+LLMs pose a number of risks and prompt security implica-
+tions, illustrated in Figure 1. The ability of LLMs to generate
+convincing responses can be exploited by malicious actors
+to spread disinformation, launch phishing attacks, or even
+impersonate individuals [6]. It is crucial to continuously
+monitor and assess the security vulnerabilities in LLMs and
+develop appropriate measures to mitigate them because their
+consequences are far-reaching. The consequences include
+financial losses, data breaches, privacy violations, impacting
+social connections, causing emotional harm, and incurring
+reputational damage to individuals and organizations. This
+paper aims to classify different types of LLM prompt security
+risks and discuss their possible consequences.
+In particular, this paper brings the following three contri-
+butions to the ongoing discussion about the impact of LLMs
+on society:
+• The key contribution of this paper is a comprehensive
+taxonomy of security risks associated with prompt-
+based attacks on LLMs. The taxonomy combines
+categorization based on the target—the user, the model,
+and a third party—with the confidentiality, integrity, and
+availability (CIA) triad [8] widely used in information
+security.
+• The paper provides a broad list describing relevant
+attack instances and their potential adversarial impact.
+• By outlining the potential risks and attack vectors
+associated with LLMs, this paper lays a solid foun-
+dational framework for future research in this area
+that integrates seamlessly with existing cybersecurity
+frameworks.
+II. RELATED WORK
+Multiple surveys and analyses discuss societal challenges
+and risks associated with LLMs [6], [9], [10]. These risks
+include discrimination, misinformation, malicious use, and
+user interaction-based harm. There is a growing concern
+for developing safe and responsible dialogue systems that
+address abusive and toxic content, unfairness, ethics, and
+privacy issues [11], [12]. Many studies address biases,
+stereotypes, discrimination, and exclusion in LLMs [4],
+[5], [13], [14], [15], and new benchmarks and metrics are
+proposed to mitigate these issues [3], [16].
+LLMs also have the potential to generate false outputs,
+which may be harmful, especially in sensitive domains such
+as health and law [6], [17]. Several approaches have been
+suggested to address various drawbacks associated with
+LLMs, such as statistical frameworks for creating equitable
+training datasets [18] and conditional-likelihood filtration to
+mitigate biases and harmful views in LLM training data [19].
+A framework for assessing and documenting risks associated
+with language model applications called RiskCards was
+introduced by Derczynski et al. [20]. Regulation of large
+generative models is also proposed to ensure transparency,
+risk management, and non-discrimination [21].
+Many works focus on ChatGPT as the representative
+example of LLMs due to its widespread adoption and
+extensive utilization in various domains. Five priorities for
+ChatGPT’s role in research are suggested by van Dis et al.
+[22]: focusing on human verification, developing rules for
+accountability, investing in truly open LLMs, embracing the
+benefits of AI, and widening the debate on LLMs. The
+ethical concerns related to the use of ChatGPT are addressed
+by Zhuo et al. [23]. The paper highlights the need for
+accountable LLMs due to the potential social prejudice and
+toxicity exhibited by these models. The specific impact of
+ChatGPT on academia and libraries is discussed by Lund and
+Wang [7], and the implications on education are explored by
+Rudolph et al. [24]
+While there is a large body of literature on the risks
+and drawbacks of LLMs in general, there are fewer
+resources on LLM security fundamentals. Among the most
+important recent publications is the Top 10 for LLMs [25],
+which addresses the urgent need for comprehensive security
+protocols. It highlights the high-risk issues associated with
+LLMs and provides a valuable resource for developers
+and stakeholders to ensure the safer adoption of this
+technology. Iqbal et al. propose a systematic evaluation
+framework for LLM platforms, particularly focusing on the
+security implications of third-party plugins in platforms
+like ChatGPT [26]. This work underscores the complexities
+introduced by integrating external services and the need for
+VOLUME 12, 2024 126177
+E. Derner et al.: Security Risk Taxonomy for Prompt-Based Interaction With LLMs
+robust security measures. Rao et al. address LLM jailbreak
+attacks, classifying them into seven categories, including
+direct instruction, syntactical transformation, and cognitive
+hacking [27]. Sun et al. provide a safety assessment of
+Chinese LLMs by several criteria, such as insult, unfairness,
+and discrimination [28]. Huang et al. provide an extensive
+survey on the safety and trustworthiness of LLMs, analyzing
+vulnerabilities categorized into inherent issues, intentional
+attacks, and unintended bugs [29]. The analysis of security
+attacks on general machine learning models [30] can also
+apply to LLMs.
+One of the most important security issues is the potential
+exposure of private and sensitive data through membership
+inference attacks, where an adversary can extract the training
+data [31], [32], [33], [34]. The most prominent examples
+of extracting the training data from LLMs can be found
+in the work of Carlini et al. [35], which demonstrates that
+memorized content, including personal information, could
+be extracted from GPT-2. Brown et al. [36] discuss privacy
+concerns regarding LLMs’ tendency to memorize phrases.
+The authors conclude that existing protection methods
+cannot ensure privacy and suggest addressing the risk by
+using exclusively public text data to train language models.
+Pan et al. [37] demonstrate practical threats to sensitive data
+and propose four different defenses to mitigate the risks.
+Shao et al. [38] examine the increasing capability of LLMs
+to aggregate information as they scale up, noting that this
+proficiency is particularly strong when entities have shorter
+co-occurrence distances or higher co-occurrence frequencies.
+In addition to stealing sensitive data, the attacker may aim to
+steal the model itself. Modern model extraction attacks are
+capable of stealing the model with increasingly lower query
+budgets [39].
+Heidenreich and Williams [40] investigate the use of
+universal adversarial triggers to affect the topic and stance
+of natural language generation models, in particular GPT-2.
+Perez et al. [41] propose using red teaming to automatically
+generate test cases to identify harmful, undesirable behaviors
+in language models before deployment, avoiding the expense
+of human annotation. Code generation models such as
+GitHub Copilot are widely used in programming, but their
+unsanitized training data can lead to security vulnerabilities
+in generated code [42], [43]. A novel approach to finding
+vulnerabilities in black-box code generation models by
+Hajipour et al. [43] shows its effectiveness in finding
+thousands of vulnerabilities in various models, including
+GitHub Copilot, based on the GPT model series. A security
+study by Sandoval et al. [44] reveals a positive trend,
+though: LLM-assisted participants introduced only 10%
+more security issues in C code than the control group.
+In addition, LLMs can be used to generate disinformation
+for malicious purposes [6], such as in phishing [45] or
+targeting fact verification systems [46]. Moskal et al. [47]
+demonstrate how LLMs can enhance cyber threat testing by
+automating the reasoning and decision-making processes in
+cyber campaigns.
+While the body of literature on LLM prompt security fun-
+damentals is limited, several security taxonomies can inspire
+the development of a novel taxonomy for prompt security
+risks. The work of Derbyshire et al. [48] categorizes and
+evaluates existing cyber-attack taxonomies. Nai-Fovino et al.
+[49] propose a comprehensive taxonomy for European
+cybersecurity competencies, emphasizing the need for coher-
+ent and comprehensive categorization to understand and
+mitigate cyber threats. The A VOIDIT taxonomy proposed by
+Simmons et al. [50] offers a structured approach to classify
+cyber-attacks. The Common Attack Pattern Enumeration and
+Classification (CAPEC) schema described by Barnum [51]
+provides a foundational framework for representing attack
+patterns. Charfeddine et al. [52], in addition to conventional
+cybersecurity attacks, address jailbreaks and prompt-based
+attacks targeting legitimate third parties, and discuss the
+defensive use of ChatGPT. Gupta et al. [53] also focus
+on jailbreak and third-party attacks but also cover prompt
+injection attacks.
+A number of LLM security works address the associated
+risks from the cybersecurity perspective. Addington [54]
+discusses selected cybersecurity threats posed by ChatGPT,
+such as the risk of information leakage, phishing attacks,
+and manipulation leading to biased and harmful responses.
+Seifried et al. [55] address ChatGPT applications in cyber-
+security both on the offensive and the defensive side.
+Ranade et al. [56] demonstrate how transformer-based LLMs
+can generate fake Cyber Threat Intelligence text, misleading
+cyber-defense systems and performing a data poisoning
+attack. Charan et al. [57] analyze the possible misuse cases
+of ChatGPT and Google Bard by cybercriminals. The authors
+generated code for the top 10 techniques from the MITRE 1
+database of cyber-attacks, showing that ChatGPT has the
+potential to perform more sophisticated and better-targeted
+attacks.
+Kang et al. [58] address bypassing ChatGPT’s defense
+mechanisms against malicious use through mechanisms such
+as prompt obfuscation, code injection, and payload splitting
+inspired by classic cybersecurity. Li et al. [59] evaluate Chat-
+GPT’s safety defenses and show that they are effective against
+direct prompts but insufficient when jailbreaking prompts
+are used. The study also explores the LLM capabilities
+integrated into the Bing search engine, concluding that it is
+substantially more vulnerable to direct prompts. Adversarial
+attack research in NLP further spawned a number of works on
+prompt injection attacks that manipulate the model [60], [61],
+[62], jailbreak attacks [63], or a combination of both [64].
+Sebastian [65] presents the results of an online survey
+with ten questions, asking 259 respondents about their views
+on ChatGPT’s security. A follow-up study [66] reports
+on an online survey with 177 respondents on ChatGPT
+privacy implications and offers insights into the possible
+strategies to secure private information in LLMs. The work
+of Shi et al. [67] proposes BadGPT, claimed to be the
+1https://attack.mitre.org/
+126178 VOLUME 12, 2024
+E. Derner et al.: Security Risk Taxonomy for Prompt-Based Interaction With LLMs
+first backdoor attack against the reinforcement learning from
+human feedback (RLHF) fine-tuning used in LLMs. The
+experimental evaluation is performed with GPT-2.
+To the best of our knowledge, the prompt security
+implications of LLMs and, in particular, conversational AI
+systems such as ChatGPT have not yet been systematically
+covered in the literature. The taxonomy proposed in this paper
+aims to cover this gap and provide a concise, comprehensive
+tool for prompt security risk assessment.
+III. TAXONOMY OF LLM ATTACKS
+We propose a taxonomy that delineates different types of
+security threats and their implications in the prompt-based
+interaction of users with LLMs. It has been designed with
+a broad and diverse audience in mind, including model
+developers and owners, LLM users, researchers, and policy-
+makers. The taxonomy provides a broad, systematic overview
+of relevant security risks, enabling us to understand them
+better and develop robust measures to mitigate these threats.
+We follow the best practices of developing a taxonomy
+inspired by the cybersecurity attack taxonomy analysis [48]to
+design a taxonomy that is mutually exclusive, comprehensive,
+and intuitive.
+The taxonomy exclusively focuses on the user-model
+communication pipeline, covering a broad spectrum of
+attacks that exploit prompts or misuse a given trained model.
+Specifically, we are interested in potential threats within
+a black-box setting, where we have no or very limited
+knowledge of the model’s inner workings and lack direct
+access. The scope of our work excludes classic cyber-attacks
+on the infrastructure hosting the model, training backdoors,
+and direct model edits.
+A. CLASSIFICATION BY ATTACK TARGET
+The main approach to classifying the potential attacks that
+we consider the most useful is by their target. Three main
+categories emerge:
+• The user: Disrupting the user’s workflow by compro-
+mising the exchange between the user and the LLM.
+• The model: Disrupting the model or coaxing it into
+unintended outputs.
+• A third party: Utilizing the model as a tool to launch
+attacks on third parties.
+Each category implies a different attack strategy and reflects
+distinct security considerations.
+B. CLASSIFICATION BY CIA TRIAD
+The CIA triad [8] is a model used in information security
+to identify the three properties of information that need to
+be protected: confidentiality, integrity, and availability. Each
+of them specifies one way in which information could be
+threatened.
+• Confidentiality: Limiting access to interaction with
+the LLM to the authorized recipient only. In case
+confidentiality is compromised, information is disclosed
+to undesired individuals.
+• Integrity: Maintaining the accuracy, validity, and com-
+pleteness of the interaction with the LLM. In case the
+integrity is compromised, data can be changed on the
+way between the sender and the recipient without their
+knowledge.
+• A vailability: Ensuring that authorized users can access
+the LLM when needed. If availability is degraded,
+the service cannot be accessed or used effectively for
+legitimate purposes.
+These form the basis of the second criterion in our
+taxonomy, helping define potential effects on the interaction
+with an LLM.
+FIGURE 2. Overview of attacks on the user.
+C. ATTACKS TARGETING THE USER
+Attacks on users exploit the vulnerabilities in the user-model
+communication pipeline. Attackers may be in-line, intercept-
+ing network traffic, or establishing fraudulent services to
+forward queries. Figure 2 provides an overview of the attacks.
+Prompt blocking focuses on interrupting availability [25].
+The attacker intercepts and discards the user’s prompt,
+essentially creating a break in the communication pipeline.
+Such attacks could lead to decreased efficiency and user
+frustration, as users may have to repeatedly send prompts,
+often without understanding why their prompts are not being
+processed. This can be particularly impactful when LLMs
+are employed in time-sensitive environments, like emergency
+response or medical advice systems. A strategic deployment
+of such an attack could potentially result in significant
+disruption to important services.
+In prompt tampering, the attacker targets communication
+integrity by modifying the user’s prompt before it reaches
+the model [25], [27], [29], [40], [58], [59]. This could
+involve changing prompt semantics to get different results or
+injecting misleading information. For instance, the attacker
+could subtly modify a lawyer’s prompt, asking for relevant
+case precedents to request fictional cases instead, inducing
+hallucination even if the model would otherwise provide a
+factually correct response. The unwitting user might then
+base their actions on false information.
+In contrast to prompt tampering, prompt bloating is an
+attack on availability, where the attacker manipulates the
+user’s prompt in such a way that it results in an excessively
+VOLUME 12, 2024 126179
+E. Derner et al.: Security Risk Taxonomy for Prompt-Based Interaction With LLMs
+long response from the model [25]. This could be achieved
+by appending the original prompt with additional, potentially
+irrelevant or nonsensical requests. The result is a ‘flood’ of
+information that the user has to wade through, making it
+difficult to find the information they actually need. In extreme
+cases, the bloating might be so severe that the response cannot
+be efficiently processed, effectively blocking the user from
+performing their tasks.
+Response blocking hinders availability by preventing
+the model’s response from reaching the user [25]. The
+attacker might intercept the response or cause a break in the
+communication after the model has processed the prompt.
+Similarly to prompt blocking, this could potentially hinder
+important operations if the LLM is being used in a critical
+system. Additionally, since the prompt has arrived but the
+response has not, this attack can create an illusion of the
+model being inefficient and unreliable. This may severely
+damage user trust.
+Response tampering is an integrity attack where the
+attacker alters the model’s response before it reaches the
+user [25]. Tampering could involve removing important
+information, adding misinformation, or changing the tone
+of the response. The implications of such attacks could
+range from minor confusion to serious misinformation. For
+instance, if a medical practitioner uses an LLM for diagnostic
+assistance, altered responses could lead to misdiagnoses,
+endangering patient health.
+Finally, attacks on confidentiality include eavesdropping,
+where the attacker illicitly ‘listens in’ on the prompts and
+responses being sent between the user and the model [29].
+This can lead to breaches of privacy, particularly if sensi-
+tive information like personal details, proprietary business
+information, or confidential legal advice is being discussed.
+Besides the immediate privacy concerns, such information
+could be exploited in further attacks or used for blackmail
+or corporate espionage.
+FIGURE 3. Overview of attacks on the model.
+D. ATTACKS TARGETING THE MODEL
+To safeguard LLMs, it is crucial to anticipate and comprehend
+the potential security threats targeting the model itself. The
+attack types in this category are depicted in Figure 3 and
+described below.
+Prompt injection involves altering the behavior of the
+model to carry out tasks that it was not intended for,
+thereby compromising the model’s integrity [59]. Malicious
+actors might manipulate the model to generate certain
+responses when specific prompts are asked. In contrast
+to traditional security threats, this kind of attack can
+be relatively easy to execute, especially with persistent
+or ‘rolling’ sessions, where prompts can incrementally
+steer the model’s responses. An attacker could manipulate
+an LLM into generating defamatory content or disin-
+formation, undermining the integrity of the model and
+its output.
+Data poisoning attacks, originally conceptualized in
+computer vision [68], alter data to make it unusable
+as training data. Data poisoning can be used for noble
+reasons, such as protecting one’s privacy [69], [70], [71],
+but also maliciously, to subtly, yet permanently sabotage
+a model’s performance [72]. In the LLM context, a data
+poisoning attack aims to disrupt the usability of user-LLM
+conversations as training data for training or fine-tuning
+future LLM models. The attacker conducts a large number
+of conversations where they provide misleading information
+or incorrect feedback, stating a response was correct when it
+was, in fact, incorrect, or vice versa. Data poisoning attacks
+are only usable on LLMs that use user-LLM conversations as
+training data. Data poisoning is an especially attractive attack
+vector on smaller proprietary LLMs that receive less traffic
+because the attacker only needs a lower amount of poisoned
+conversations to succeed.
+In intensive prompt attacks, the attacker sends prompts
+that require an unusually high computational effort to
+process [25]. These intensive prompts can slow down the
+LLM considerably, thereby decreasing its availability by
+disrupting the service for other users. If used strategically,
+this could effectively function as a denial-of-service attack.
+This type of attack potentially impacts a wide array of users,
+from individuals to large organizations relying on the LLM
+for important tasks.
+Model extraction involves an attempt to extract the
+underlying structure and weights of the LLM, impacting
+the confidentiality of the model [25], [30], [35], [36], [37].
+If successful, the attacker would gain access to the ‘blueprint’
+of the model and could create a copy of it. Besides intellectual
+property theft, such attacks could enable malicious actors to
+fine-tune the stolen model for nefarious purposes or exploit
+specific weaknesses in the model that they discover through
+analysis of the model structure.
+Membership inference attacks aim to compromise the
+confidentiality of the model’s training data [25], [29], [30],
+[31], [32], [37], [38], [41], [54]. The attacker tries to
+infer whether specific data instances were included in the
+training set of the LLM. The successful execution of such
+an attack could potentially reveal sensitive information,
+such as personal details or confidential documents, that
+126180 VOLUME 12, 2024
+E. Derner et al.: Security Risk Taxonomy for Prompt-Based Interaction With LLMs
+were included in the training data. This has serious privacy
+implications and can also lead to legal issues, especially if
+the model has been trained on data that should not have been
+publicly accessible.
+Information gathering is an instance of membership
+inference. It is a wide-ranging attack that could be further
+broken down into two subcategories:
+• Extracting explicitly protected information.The attacker
+tricks the model into revealing information it has been
+specifically programmed to withhold. They do this
+by carefully crafting prompts to sidestep the model’s
+security measures and expose the protected information.
+• Extracting sensitive but unprotected information. The
+attacker coaxes the model into disclosing information
+that it should not share, but that has not been explicitly
+protected. This may occur because the model does not
+recognize the information as sensitive, underscoring
+the challenges in defining what constitutes ‘sensitive’
+information in the context of LLMs.
+E. ATTACKS TARGETING A THIRD PARTY
+As the versatility of LLMs increases, so does the risk of them
+being used as tools to target third parties not directly involved
+in the interaction between the user and the model. The attacks
+can impact the target in any aspect of the CIA triad. In attacks
+on third parties, the model serves as a resource for the attacker
+to achieve their malicious goals, often using techniques to
+manipulate the model to overcome any built-in guardrails.
+These attacks are outlined in Figure 4 and described below.
+FIGURE 4. Overview of attacks on legitimate third parties.
+With their ability to generate convincing and contextually
+relevant text, LLMs can be misused to generate malicious
+text, which has a number of adversarial uses. Malicious
+actors may leverage LLMs to generate disinformation: craft
+deceptive narratives or false claims that can then be spread on
+social platforms, contributing to the wider problem of ‘fake
+news’ [11], [56]. The potential for disinformation generation
+by LLMs heightens the need for careful moderation and
+regulation of their use, especially in politically charged or
+sensitive contexts.
+LLMs can be further misused to generate offensive
+content, which can then be distributed via various online
+channels [11], [41], [54]. The capability of these models
+to generate large volumes of text quickly makes them an
+efficient tool for creating hate speech, defamatory statements,
+or other harmful content. The offensive material, when
+distributed, can cause serious harm and distress to individuals
+or communities targeted by such attacks.
+In a phishing attack, an attacker poses as a trust-
+worthy entity to trick individuals into providing sensitive
+information [45], [54]. LLMs could be used to compose
+highly convincing phishing e-mails, enabling attackers to
+carry out these schemes more effectively and on a larger
+scale. For instance, the model can generate personalized
+e-mails that convincingly mimic the style and tone of a
+legitimate organization, thereby increasing the likelihood of
+unsuspecting recipients falling for the scam.
+The final flagship example of malicious text generation
+is using LLMs to conduct extensive spam campaigns [41],
+[58]. By automating the creation of vast amounts of unso-
+licited messages, attackers can overwhelm communication
+channels or manipulate social discourse. These campaigns
+can be disruptive, harmful, and difficult to manage due to their
+volume and speed of generation.
+Another large group of misuse cases is malicious code
+generation [42], [43], [57]. LLMs, such as GPT-3 and
+its successors, have demonstrated an impressive ability to
+generate computer code based on prompts. If harnessed
+maliciously, this could lead to the automatic generation of
+malicious software or scripts. The generated code could be
+used to exploit software vulnerabilities, carry out cyber-
+attacks, or even automate the creation of malware, which
+can then be used in more extensive attacks. This provides
+significant attack assistance to attackers and lowers the
+barrier of entry for script kiddies, malicious actors with
+limited cybersecurity knowledge that only use existing
+technology to attempt attacks [47].
+With their natural language generation capabilities, LLMs
+could be exploited to generate text that is designed to evade
+detection by content filters or security systems [58]. For
+example, an attacker might use an LLM to produce e-mails,
+bypassing content filters. Furthermore, LLMs could be used
+to craft messages that trigger or exploit vulnerabilities in
+systems that process textual input, much like a traditional
+code injection attack, but carried out via natural language
+processing systems.
+IV. EMPIRICAL INSTANCES OF LLM ATTACKS
+In order to illustrate the theoretical concepts discussed previ-
+ously, this section provides specific instances of LLM attacks.
+Some of these examples draw from existing resources, while
+others are based on our experimentation with ChatGPT.
+In this section, we provide a short summary for each custom
+instance with reference to the Appendix to link the summary
+to the full attack. The experiments were performed using the
+most recent state-of-the-art OpenAI’s model GPT-4o. 2
+2https://openai.com/index/hello-gpt-4o/
+VOLUME 12, 2024 126181
+E. Derner et al.: Security Risk Taxonomy for Prompt-Based Interaction With LLMs
+A. INSTANCES OF ATTACKS ON THE USER
+Deception through fraudulent services poses a significant
+security risk tied to the popular and widely-known LLMs
+such as ChatGPT. In these scenarios, malicious actors
+exploit the technology to develop counterfeit applications
+or platforms that mimic the LLM or falsely promise
+unrestricted access to its capabilities, thereby threatening
+confidentiality.
+Malicious actors fabricate applications and services
+promising consistent and free access to the LLM’s features,
+as observed in existing reports. 3 They might also clone
+genuine websites or applications, e.g., creating a convincing
+facade of ChatGPT. 4 Users who fall victim to these scams
+often expose their personal information or devices to
+serious risks. Typically, these fraudulent applications target
+popular platforms like Windows and Android. They have the
+capability to harvest sensitive information from users through
+eavesdropping attacks, compromising their confidentiality.
+They target sensitive data such as credit card numbers and
+account credentials. Once collected, this information can
+be exploited for identity theft, financial fraud, or further
+cyber-attacks. These fraudulent applications can get beyond
+data harvesting to classic cyber-attacks, e.g., by installing
+malware.
+The prompt tampering technique is another method that
+malicious actors can use. This involves manipulating the
+LLM to generate false or misleading outputs in response
+to a user’s legitimate query, thereby compromising the
+integrity of the information received. An example of this
+technique is detailed in Table1 in the Appendix. Additionally,
+the prompt bloating technique, illustrated in Table 2 in
+the Appendix, involves inflating the response to a user’s
+query to an excessive length, impacting the availability
+by making it difficult for the user to extract useful
+information from the response. Both of these techniques
+can undermine user trust and degrade the overall user
+experience.
+B. INSTANCES OF ATTACKS ON THE MODEL
+There are privacy and security concerns associated with
+the potential disclosure of personal information by LLMs,
+compromising confidentiality. Attackers attempt to recover
+parts of the training data through membership inference
+attacks, potentially exposing sensitive information. Despite
+implementing safety measures to prevent the extraction of
+personal and sensitive information, the risk of accidentally
+disclosing phone numbers, e-mail addresses, and other
+private details remains. For example, Li et al. [59] attempted
+to recover e-mail addresses from ChatGPT, succeeding for
+frequent e-mails.
+Malicious actors exploit the LLM’s generative capabilities
+to gather information about potential targets, posing another
+3https://www.bleepingcomputer.com/news/security/hackers-use-fake-
+chatgpt-apps-to-push-windows-android-malware/
+4https://blog.cyble.com/2023/02/22/the-growing-threat-of-chatgpt-
+based-phishing-attacks/
+threat to confidentiality. The intelligence gathered can be
+used in the early stages of a cyber-attack when attackers seek
+to understand the target better to launch the most effective
+attack. As described on a Reddit thread, 5 ChatGPT can be
+directed to collect intelligence about a chosen target, thus
+performing a membership inference attack. For example,
+ChatGPT can list information about IT systems employed by
+a specific bank; see Table 3 in the Appendix.
+Moreover, ChatGPT’s potential misuse extends to gen-
+erating speculative or harmful content about individuals,
+which can lead to reputational damage or privacy violations,
+thus undermining the model’s integrity. In a custom prompt
+injection attack instance, we were able to make ChatGPT
+divulge personal information about a prominent politician
+(full instance in Table 4 in the Appendix). It was primed by
+a set of role-playing instructions, which we intentionally do
+not report in full due to ethical concerns.
+C. INSTANCES OF ATTACKS ON A THIRD PARTY
+Although LLM-based systems like ChatGPT undergo rigor-
+ous fine-tuning processes and use methods such as RLHF
+to continuously improve them, attackers can still exploit
+them to compromise a third party’s confidentiality, integrity,
+or availability. By ingeniously crafting prompts or engaging
+in role-playing scenarios, users can manipulate the model to
+produce undesired outputs.
+Advanced LLMs can generate code, which raises several
+security concerns. For instance, malicious actors could use
+ChatGPT to create obfuscated code, making it challenging
+for security analysts to detect and understand their activities.
+As an example, we have been able to exploit ChatGPT to pro-
+duce proof-of-concept code for testing Log4j vulnerabilities
+(full instance in Table 5 in the Appendix).
+As for malicious text generation attacks, we demonstrate
+that ChatGPT can craft convincing phishing e-mails. For
+instance, an attacker might direct ChatGPT to write an
+e-mail notifying employees about a salary increase. The
+unsuspecting employee, pleased with the news, would follow
+the e-mail’s instructions, thereby exposing their device to a
+threat embedded in an Excel file attachment (full instance in
+Table 6 in the Appendix).
+V. DISCUSSION
+LLM security impacts all actors involved with LLM-
+powered systems: users, LLM stakeholders, policymak-
+ers, and, broadly speaking, society in general. Therefore,
+it is quickly becoming an integral part of cybersecurity,
+and it is imperative that LLM security is safeguarded
+now. In this section, we discuss the contributions of the
+proposed taxonomy toward LLM and cybersecurity best
+practices.
+Firstly, the broad view of LLM attacks presented in
+the taxonomy reveals a high diversity of the attacks,
+5https://www.reddit.com/r/OSINT/comments/10tq6iz/how_to_use_
+chatgpt_for_osint/
+126182 VOLUME 12, 2024
+E. Derner et al.: Security Risk Taxonomy for Prompt-Based Interaction With LLMs
+which motivates the need for new defense mechanisms.
+In LLM-powered systems, a classic cybersecurity policy
+restricting access to the system to authorized users only
+is certainly important. Notably, attacks on the user hinge
+on the third-party attacker gaining unauthorized access to
+the user-LLM pipeline. On its own, however, this is not a
+sufficient security measure. Similarly to other AI models,
+LLMs are susceptible to adversarial attacks that manipulate
+the model inputs to achieve an undesirable model output.
+These can be launched by registered, authenticated users
+with authorized access. The attack vector is the prompt
+itself, and it is notoriously difficult to disambiguate between
+benign and adversarial text—one essentially needs an AI to
+judge an AI’s input. With LLMs, this critical weakness is
+exacerbated further because LLM outputs can be used for
+malicious deeds outside the model’s ecosystem, as evidenced
+by malicious content and code attacks targeting a third party.
+The proposed taxonomy takes these emerging risks fully
+into account.
+Secondly, while the attacks described in our taxonomy
+can be standalone attacks, they can also be stacked together
+to form more complex attacks, referred to as kill chains
+in cybersecurity [73]. In such cases, each attack forms
+a building block of a kill chain: a sequence of attacks
+that completes an objective more complex than achievable
+by a single attack. In the modern context, one kill chain
+may realistically feature both classic and LLM attacks.
+For example, consider the following scenario. An attacker
+executes a model manipulation attack to obtain from an LLM
+sensitive information about key people in a certain company.
+Then, they perform a malicious text generation attack, asking
+the LLM to write a phishing e-mail specifically targeting a
+key person in the company. Finally, they gain unauthorized
+access to the target company. The LLM attacks defined in the
+proposed taxonomy are scoped to complement the existing
+cyber-attacks.
+Finally, the proposed taxonomy combines a general and
+actor-specific view of LLM security. It is important to
+balance the general safety of LLM-powered systems for a
+society increasingly using AI and the value for individual
+participants of the user-LLM exchange. The general view
+is covered by the CIA categorization: we need to protect
+the confidentiality, integrity, and availability of LLMs for
+everyone in the pipeline. This perspective is especially
+important for policymakers, security experts, and scientists.
+The actor-specific view is covered by the categorization by
+attack target. Users, LLM stakeholders, and third parties can
+use the proposed taxonomy as a structured, broad framework
+to protect their interests. As a result, the proposed taxonomy
+takes into account everyone in the pipeline and society in
+general, which we hope will result in broad adoption and
+usefulness.
+VI. CONCLUSION
+This paper contributes to a critical understanding of LLMs’
+potential misuse and exploitation. Through systematic
+classification of attack types along the user-model com-
+munication pipeline, we have provided a comprehensive
+taxonomy that elucidates the key areas where such misuse
+might occur: attacks targeting the user, the model, and
+third parties. We also classified the attacks from the
+perspective of the widely adopted confidentiality, integrity,
+and availability (CIA) triad. These classifications are not
+merely hypothetical; our detailed exploration of empirical
+instances corroborates the potential for these attacks to
+occur and demonstrates how the threats can manifest in the
+real world.
+Our research underscores the complexity of safeguarding
+LLMs. While considerable strides have been made in
+improving LLM safety measures, our findings reveal that
+they are not immune to determined or creative misuse. This
+highlights the need for enhanced security solutions, model
+training refinements, and fine-tuning of safety mechanisms to
+suppress emerging threats. We further illustrate the potential
+for LLMs to be manipulated into malicious outputs, whether
+through fraudulent services, information theft, or harmful
+content creation. The reported empirical instances spotlight
+the risks stemming from the misuse.
+The proposed taxonomy is intended to serve as a
+framework for future research in the field of LLM security,
+providing a reference for identifying and addressing potential
+threats. We encourage researchers and practitioners to build
+upon our taxonomy when considering the potential security
+risks and ethical implications posed by LLMs. In the pursuit
+of AI benefits, we must ensure that these powerful tools are
+not used to inflict harm.
+LIMITATIONS
+While we made our best efforts to provide a comprehensive
+taxonomy of potential security risks, there are several
+limitations. Our exploration is based on the versions and
+applications of LLMs available up until the point of
+writing, using ChatGPT as the most prominent example.
+As AI technology rapidly evolves, newer versions of models
+might present different vulnerabilities or improve upon the
+ones we have identified. However, the timelessness of our
+work is supported by the fact that the risks identified in
+our previous study [74] when using one of the earliest
+GPT-3.5 versions still manifest when using the latest
+GPT-4o model.
+Furthermore, the instances provided in our study do not
+cover all potential misuses or attack vectors. We empirically
+tested only the attacks that did not interfere with the
+functioning of the model, the Terms of Use, and any
+applicable legislation. LLMs can be exploited in unique
+and unforeseen ways, particularly by innovative or highly
+skilled threat actors. Our work is intended to encourage future
+research aiming at uncovering these evolving threats.
+ETHICS STATEMENT
+The authors affirm that all research was conducted following
+widely adopted ethical guidelines. Special care was taken to
+VOLUME 12, 2024 126183
+E. Derner et al.: Security Risk Taxonomy for Prompt-Based Interaction With LLMs
+ensure that all experimentation with the ChatGPT model was
+conducted responsibly, with no intent to cause harm or exploit
+vulnerabilities for malicious purposes. We did not use the
+model to actually disclose private information or deploy any
+potentially harmful generated content in an attack on a third
+party; any such outputs shown in the paper were generated
+solely for illustrative purposes within an ethical boundary
+TABLE 1. Prompt tampering using ChatGPT. The first example shows a
+benign prompt and response. In the second example, the benign prompt
+was prepended with malicious instructions.
+TABLE 2. Prompt bloating using ChatGPT. The first example shows a
+benign prompt and response. In the second example, malicious
+instructions that generate clutter were appended to the prompt.
+and were anonymized and carefully selected to prevent
+misuse.
+TABLE 3. An example of using ChatGPT to gather information on the IT
+systems used by the target. Sensitive identifying information has been
+masked out to protect privacy.
+TABLE 4. An example of ChatGPT primed to override its ethical behavior
+within a role-playing scheme. The model discloses details from the
+private life of a public person. Sensitive identifying information has been
+masked out to protect privacy.
+126184 VOLUME 12, 2024
+E. Derner et al.: Security Risk Taxonomy for Prompt-Based Interaction With LLMs
+This research is intended to shed light on potential
+vulnerabilities and misuse of LLMs. We believe that by
+drawing attention to these issues, we can contribute to
+the ongoing efforts to improve the security and ethical
+deployment of these models. It is our hope that our work
+will help to inform the development of safer, more reliable
+AI systems and foster a responsible and ethical approach to
+AI research and development.
+APPENDIX
+EMPIRICAL INSTANCES OF ATTACKS
+This appendix lists sessions with ChatGPT demonstrating
+real-world instances of LLM attacks described in Section IV.
+The interactions reported were carried out using the version
+of ChatGPT from May 13, 2024, based on GPT-4o, accessed
+via the web interface.
+TABLE 5. An example of malicious code generation using ChatGPT –
+Log4j vulnerability testing. Part of the code has been masked out in the
+output.
+TABLE 6. An example of malicious text writing using ChatGPT –
+a phishing e-mail.
+REFERENCES
+[1] A. V aswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez,
+Ł. Kaiser, and I. Polosukhin, ‘‘Attention is all you need,’’ in Proc. Adv.
+Neural Inf. Process. Syst., vol. 30, 2017, pp. 1–11.
+[2] OpenAI. (Nov. 2022). Introducing ChatGPT. [Online]. Available:
+https://openai.com/blog/chatgpt
+[3] J. Dhamala, T. Sun, V . Kumar, S. Krishna, Y . Pruksachatkun, K.-W. Chang,
+and R. Gupta, ‘‘BOLD: Dataset and metrics for measuring biases in open-
+ended language generation,’’ inProc. ACM Conf. Fairness, Accountability,
+Transparency, Mar. 2021, pp. 862–872.
+[4] P . P . Liang, C. Wu, L.-P . Morency, and R. Salakhutdinov, ‘‘Towards
+understanding and mitigating social biases in language models,’’ in Proc.
+38th Int. Conf. Mach. Learn., vol. 139, 2021, pp. 6565–6576.
+[5] Y . Chen, C. Mahoney, I. Grasso, E. Wali, A. Matthews, T. Middleton,
+M. Njie, and J. Matthews, ‘‘Gender bias and under-representation in natural
+language processing across human languages,’’ in Proc. AAAI/ACM Conf.
+AI, Ethics, Soc., Jul. 2021, pp. 24–34.
+[6] L. Weidinger et al., ‘‘Taxonomy of risks posed by language models,’’
+in Proc. ACM Conf. Fairness, Accountability, Transparency, Jun. 2022,
+pp. 214–229.
+[7] B. D. Lund and T. Wang, ‘‘Chatting about ChatGPT: How may AI and
+GPT impact academia and libraries?’’Library Hi Tech News, vol. 40, no. 3,
+pp. 26–29, May 2023.
+[8] D. Parker, ‘‘Our excessively simplistic information security model and how
+to fix it,’’ ISSA J., vol. 8, no. 7, pp. 12–21, 2010.
+[9] A. Tamkin, M. Brundage, J. Clark, and D. Ganguli, ‘‘Understanding the
+capabilities, limitations, and societal impact of large language models,’’
+2021, arXiv:2102.02503.
+[10] R. Bommasani et al., ‘‘On the opportunities and risks of foundation
+models,’’ 2021, arXiv:2108.07258.
+[11] J. Deng, J. Cheng, H. Sun, Z. Zhang, and M. Huang, ‘‘Towards safer
+generative language models: A survey on safety risks, evaluations, and
+improvements,’’ 2023, arXiv:2302.09270.
+[12] M. Brundage, K. Mayer, T. Eloundou, S. Agarwal, S. Adler,
+G. Krueger, J. Leike, and P . Mishkin. (Mar. 2023). Lessons Learned
+on Language Model Safety and Misuse. [Online]. Available:
+https://openai.com/research/language-model-safety-and-misuse
+[13] H. Devinney, J. Björklund, and H. Björklund, ‘‘Theories of ‘gender’
+in NLP bias research,’’ in Proc. ACM Conf. Fairness, Accountability,
+Transparency, 2022, pp. 2083–2102.
+VOLUME 12, 2024 126185
+E. Derner et al.: Security Risk Taxonomy for Prompt-Based Interaction With LLMs
+[14] W. I. Cho, J. Kim, J. Y ang, and N. S. Kim, ‘‘Towards cross-lingual
+generalization of translation gender bias,’’ in Proc. ACM Conf. Fairness,
+Accountability, Transparency, Mar. 2021, pp. 449–457.
+[15] H. R. Kirk, Y . Jun, F. V olpin, H. Iqbal, E. Benussi, F. Dreyer,
+A. Shtedritski, and Y . Asano, ‘‘Bias out-of-the-box: An empirical analysis
+of intersectional occupational biases in popular generative language
+models,’’ in Proc. Adv. Neural Inf. Process. Syst., vol. 34, 2021, pp. 2611–
+2624.
+[16] A. Xu, E. Pathak, E. Wallace, S. Gururangan, M. Sap, and D. Klein,
+‘‘Detoxifying language models risks marginalizing minority voices,’’ in
+Proc. Conf. North Amer . Chapter Assoc. Comput. Linguistics, Hum. Lang.
+Technol., 2021, pp. 2390–2397.
+[17] S. Lin, J. Hilton, and O. Evans, ‘‘TruthfulQA: Measuring how models
+mimic human falsehoods,’’ in Proc. 60th Annu. Meeting Assoc. Comput.
+Linguistics, 2022, pp. 3214–3252.
+[18] W. Cai, R. Encarnacion, B. Chern, S. Corbett-Davies, M. Bogen,
+S. Bergman, and S. Goel, ‘‘Adaptive sampling strategies to construct
+equitable training datasets,’’ in Proc. ACM Conf. Fairness, Accountability,
+Transparency, Jun. 2022, pp. 1467–1478.
+[19] H. Ngo, C. Raterink, J. G. Araújo, I. Zhang, C. Chen, A. Morisot,
+and N. Frosst, ‘‘Mitigating harm in language models with conditional-
+likelihood filtration,’’ 2021, arXiv:2108.07790.
+[20] L. Derczynski, H. Rose Kirk, V . Balachandran, S. Kumar, Y . Tsvetkov,
+M. R. Leiser, and S. Mohammad, ‘‘Assessing language model deployment
+with risk cards,’’ 2023, arXiv:2303.18190.
+[21] P . Hacker, A. Engel, and M. Mauer, ‘‘Regulating ChatGPT and other large
+generative AI models,’’ 2023, arXiv:2302.02337.
+[22] E. A. M. van Dis, J. Bollen, W. Zuidema, R. van Rooij, and C. L. Bockting,
+‘‘ChatGPT: Five priorities for research,’’ Nature, vol. 614, no. 7947,
+pp. 224–226, Feb. 2023.
+[23] T. Y ue Zhuo, Y . Huang, C. Chen, and Z. Xing, ‘‘Red teaming
+ChatGPT via jailbreaking: Bias, robustness, reliability and toxicity,’’ 2023,
+arXiv:2301.12867.
+[24] J. Rudolph, S. Tan, and S. Tan, ‘‘ChatGPT: Bullshit spewer or the end of
+traditional assessments in higher education?’’J. Appl. Learn. Teach., vol. 6,
+no. 1, pp. 342–363, 2023.
+[25] OW ASP . (Aug. 2023). OWASP Top 10 for LLM. [Online]. Available:
+https://owasp.org/www-project-top-10-for-large-language-model-
+applications/assets/PDF/OW ASP-Top-10-for-LLMs-2023-v1_0.pdf
+[26] U. Iqbal, T. Kohno, and F. Roesner, ‘‘LLM platform security: Applying a
+systematic evaluation framework to OpenAI’s ChatGPT plugins,’’ 2023,
+arXiv:2309.10254.
+[27] A. Rao, S. V ashistha, A. Naik, S. Aditya, and M. Choudhury, ‘‘Tricking
+LLMs into disobedience: Formalizing, analyzing, and detecting jail-
+breaks,’’ 2023, arXiv:2305.14965.
+[28] H. Sun, Z. Zhang, J. Deng, J. Cheng, and M. Huang, ‘‘Safety assessment
+of Chinese large language models,’’ 2023, arXiv:2304.10436.
+[29] X. Huang, W. Ruan, W. Huang, G. Jin, Y . Dong, C. Wu, S. Bensalem,
+R. Mu, Y . Qi, X. Zhao, K. Cai, Y . Zhang, S. Wu, P . Xu, D. Wu,
+A. Freitas, and M. A. Mustafa, ‘‘A survey of safety and trustworthiness
+of large language models through the lens of verification and validation,’’
+2023, arXiv:2305.11391.
+[30] N. Brink, Y . Kamphuis, Y . Maas, G. Jansen-Ferdinandus, J. van Stijn,
+B. Poppink, P . de Haan, and I. Chiscop. (Feb. 2023). Adversarial AI in
+the Cyber Domain. [Online]. Available: http://resolver.tudelft.nl/uuid
+[31] S. Hisamoto, M. Post, and K. Duh, ‘‘Membership inference attacks on
+sequence-to-sequence models: Is my data in your machine translation
+system?’’ Trans. Assoc. Comput. Linguistics, vol. 8, pp. 49–63, Dec. 2020.
+[32] H. Hu, Z. Salcic, L. Sun, G. Dobbie, P . S. Y u, and X. Zhang, ‘‘Membership
+inference attacks on machine learning: A survey,’’ ACM Comput. Surv.,
+vol. 54, no. 11s, pp. 1–37, Jan. 2022.
+[33] M. Li, J. Wang, J. Wang, and S. Neel, ‘‘MoPe: Model perturbation based
+privacy attacks on language models,’’ in Proc. Conf. Empirical Methods
+Natural Lang. Process., H. Bouamor, J. Pino, and K. Bali, Eds., Singapore:
+Association for Computational Linguistics, Dec. 2023, pp. 13647–13660.
+[Online]. Available: https://aclanthology.org/2023.emnlp-main.842
+[34] F. Mireshghallah, K. Goyal, A. Uniyal, T. Berg-Kirkpatrick, and
+R. Shokri, ‘‘Quantifying privacy risks of masked language mod-
+els using membership inference attacks,’’ in Proc. Conf. Empirical
+Methods Natural Lang. Process., Y . Goldberg, Z. Kozareva, and
+Y . Zhang, Eds., Abu Dhabi, United Arab Emirates: Association for Com-
+putational Linguistics, Dec. 2022, pp. 8332–8347. [Online]. Available:
+https://aclanthology.org/2022.emnlp-main.570
+[35] N. Carlini, F. Tramèr, E. Wallace, M. Jagielski, A. Herbert-V oss,
+K. Lee, A. Roberts, T. Brown, D. Song, Ú. Erlingsson, A. Oprea, and
+C. Raffel, ‘‘Extracting training data from large language models,’’ in Proc.
+30th USENIX Secur . Symp. Berkeley, CA, USA: USENIX Association,
+Aug. 2021, pp. 2633–2650.
+[36] H. Brown, K. Lee, F. Mireshghallah, R. Shokri, and F. Tramèr, ‘‘What does
+it mean for a language model to preserve privacy?’’ in Proc. ACM Conf.
+Fairness, Accountability, Transparency, Jun. 2022, pp. 2280–2292.
+[37] X. Pan, M. Zhang, S. Ji, and M. Y ang, ‘‘Privacy risks of general-purpose
+language models,’’ in Proc. IEEE Symp. Secur . Privacy (SP), May 2020,
+pp. 1314–1331.
+[38] H. Shao, J. Huang, S. Zheng, and K. Chen-Chuan Chang, ‘‘Quantifying
+association capabilities of large language models and its implications on
+privacy leakage,’’ 2023, arXiv:2305.12707.
+[39] C. Dai, M. Lv, K. Li, and W. Zhou, ‘‘MeaeQ: Mount model extraction
+attacks with efficient queries,’’ in Proc. Conf. Empirical Methods Natural
+Lang. Process., H. Bouamor, J. Pino, and K. Bali, Eds., Singapore:
+Association for Computational Linguistics, Dec. 2023, pp. 12671–12684.
+[Online]. Available: https://aclanthology.org/2023.emnlp-main.781
+[40] H. S. Heidenreich and J. R. Williams, ‘‘The Earth is flat and the sun is not a
+star: The susceptibility of GPT-2 to universal adversarial triggers,’’ inProc.
+AAAI/ACM Conf. AI, Ethics, Soc., Jul. 2021, pp. 566–573.
+[41] E. Perez, S. Huang, F. Song, T. Cai, R. Ring, J. Aslanides, A. Glaese,
+N. McAleese, and G. Irving, ‘‘Red teaming language models with language
+models,’’ 2022, arXiv:2202.03286.
+[42] M. Chen et al., ‘‘Evaluating large language models trained on code,’’ 2021,
+arXiv:2107.03374.
+[43] H. Hajipour, K. Hassler, T. Holz, L. Schönherr, and M. Fritz, ‘‘CodeLMSec
+benchmark: Systematically evaluating and finding security vulnerabilities
+in black-box code language models,’’ 2023, arXiv:2302.04012.
+[44] G. Sandoval, H. Pearce, T. Nys, R. Karri, S. Garg, and
+B. Dolan-Gavitt, ‘‘Lost at C: A user study on the security
+implications of large language model code assistants,’’ in Proc.
+32nd USENIX Secur . Symp. Anaheim, CA, USA: USENIX
+Association, Aug. 2023, pp. 2205–2222. [Online]. Available: https://
+www.usenix.org/conference/usenixsecurity23/presentation/sandoval
+[45] R. Karanjai, ‘‘Targeted phishing campaigns using large scale language
+models,’’ 2022, arXiv:2301.00665.
+[46] Y . Du, A. Bosselut, and C. D. Manning, ‘‘Synthetic disinformation attacks
+on automated fact verification systems,’’ in Proc. AAAI Conf. Artif. Intell.,
+2022, vol. 36, no. 10, pp. 10581–10589.
+[47] S. Moskal, S. Laney, E. Hemberg, and U.-M. O’Reilly, ‘‘LLMs killed the
+script kiddie: How agents supported by large language models change the
+landscape of network threat testing,’’ 2023, arXiv:2310.06936.
+[48] R. Derbyshire, B. Green, D. Prince, A. Mauthe, and D. Hutchison,
+‘‘An analysis of cyber security attack taxonomies,’’ in Proc. IEEE Eur .
+Symp. Secur . Privacy Workshops (EuroS PW), Apr. 2018, pp. 153–161.
+[49] I. Nai-Fovino, R. Neisse, J. Hernández-Ramos, N. Polemi, G. Ruzzante,
+M. Figwer, and A. Lazari, ‘‘A proposal for a European cybersecurity
+taxonomy,’’ Office Eur. Union, Brussels, Belgium, Tech. Rep. JRC118089,
+2019.
+[50] C. Simmons, C. Ellis, S. Shiva, D. Dasgupta, and Q. Wu, ‘‘A VOIDIT: A
+cyber attack taxonomy,’’ Dept. Comput. Sci., Univ. Memphis, Memphis,
+TN, USA, Tech. Rep. CS-09-003, 2009.
+[51] S. Barnum, ‘‘Common attack pattern enumeration and classification
+(CAPEC) schema description,’’ Dept. Homeland Secur., Washington, DC,
+USA, Tech. Rep., 2008.
+[52] M. Charfeddine, H. M. Kammoun, B. Hamdaoui, and M. Guizani,
+‘‘ChatGPT’s security risks and benefits: Offensive and defensive use-
+cases, mitigation measures, and future implications,’’IEEE Access, vol. 12,
+pp. 30263–30310, 2024.
+[53] M. Gupta, C. Akiri, K. Aryal, E. Parker, and L. Praharaj, ‘‘From ChatGPT
+to ThreatGPT: Impact of generative AI in cybersecurity and privacy,’’IEEE
+Access, vol. 11, pp. 80218–80245, 2023.
+[54] S. Addington, ‘‘ChatGPT: Cyber security threats and countermeasures,’’
+SSRN Electron. J., Apr. 2023.
+[55] K. Seifried, S. Heide, B. Filip, V . Manral, L. Ruddigkeit, W. Dula,
+E. E. Cohen, B. Toney, S. Ghose, and M. Bregkou. (Apr. 2023).
+Security Implications of ChatGPT . [Online]. Available: https://
+cloudsecurityalliance.org/artifacts/security-implications-of-chatgpt/
+[56] P . Ranade, A. Piplai, S. Mittal, A. Joshi, and T. Finin, ‘‘Generating fake
+cyber threat intelligence using transformer-based models,’’ in Proc. Int.
+Joint Conf. Neural Netw. (IJCNN), Jul. 2021, pp. 1–9.
+126186 VOLUME 12, 2024
+E. Derner et al.: Security Risk Taxonomy for Prompt-Based Interaction With LLMs
+[57] P . V . S. Charan, H. Chunduri, P . M. Anand, and S. K. Shukla, ‘‘From text to
+MITRE techniques: Exploring the malicious use of large language models
+for generating cyber attack payloads,’’ 2023, arXiv:2305.15336.
+[58] D. Kang, X. Li, I. Stoica, C. Guestrin, M. Zaharia, and T. Hashimoto,
+‘‘Exploiting programmatic behavior of LLMs: Dual-use through standard
+security attacks,’’ 2023, arXiv:2302.05733.
+[59] H. Li, D. Guo, W. Fan, M. Xu, J. Huang, F. Meng, and Y . Song, ‘‘Multi-step
+jailbreaking privacy attacks on ChatGPT,’’ 2023, arXiv:2304.05197.
+[60] Z. Zhou, Q. Wang, M. Jin, J. Y ao, J. Y e, W. Liu, W. Wang, X. Huang, and
+K. Huang, ‘‘Mathattack: Attacking large language models towards math
+solving ability,’’ in Proc. AAAI Conf. Artif. Intell., 2024, vol. 38, no. 17,
+pp. 19750–19758.
+[61] H. Zhu, Q. Zhao, W. Shang, Y . Wu, and K. Liu, ‘‘LimeAttack: Local
+explainable method for textual hard-label adversarial attack,’’ in Proc.
+AAAI Conf. Artif. Intell., 2024, vol. 38, no. 17, pp. 19759–19767.
+[62] M. Y e, C. Miao, T. Wang, and F. Ma, ‘‘Texthoaxer: Budgeted hard-label
+adversarial attacks on text,’’ inProc. AAAI Conf. Artif. Intell., 2022, vol. 36,
+no. 4, pp. 3877–3884.
+[63] X. Qi, K. Huang, A. Panda, P . Henderson, M. Wang, and P . Mittal, ‘‘Visual
+adversarial examples jailbreak aligned large language models,’’ in Proc.
+AAAI Conf. Artif. Intell., 2024, vol. 38, no. 19, pp. 21527–21536.
+[64] S. Schulhoff, J. Pinto, A. Khan, L.-F. Bouchard, C. Si, S. Anati,
+V . Tagliabue, A. Kost, C. Carnahan, and J. Boyd-Graber, ‘‘Ignore this title
+and HackAPrompt: Exposing systemic vulnerabilities of LLMs through
+a global prompt hacking competition,’’ in Proc. Conf. Empirical Methods
+Natural Lang. Process., H. Bouamor, J. Pino, and K. Bali, Eds., Singapore:
+Association for Computational Linguistics, Dec. 2023, pp. 4945–4977.
+[Online]. Available: https://aclanthology.org/2023.emnlp-main.302
+[65] G. Sebastian, ‘‘Do ChatGPT and other AI chatbots pose a cybersecurity
+risk: An exploratory study,’’ Int. J. Secur . Privacy Pervasive Comput.,
+vol. 15, no. 1, pp. 1–11, 2023.
+[66] G. Sebastian, ‘‘Privacy and data protection in ChatGPT and other AI
+chatbots: Strategies for securing user information,’’ Int. J. Secur . Privacy
+Pervasive Comput., vol. 15, no 1, pp. 1–14, 2023.
+[67] J. Shi, Y . Liu, P . Zhou, and L. Sun, ‘‘BadGPT: Exploring security
+vulnerabilities of ChatGPT via backdoor attacks to InstructGPT,’’ 2023,
+arXiv:2304.12298.
+[68] P . W. Koh and P . Liang, ‘‘Understanding black-box predictions via
+influence functions,’’ in Proc. Int. Conf. Mach. Learn., 2017, pp. 1885–
+1894.
+[69] J. Feng, Q.-Z. Cai, and Z.-H. Zhou, ‘‘Learning to confuse: Generating
+training time adversarial data with auto-encoder,’’ inProc. Adv. Neural Inf.
+Process. Syst., vol. 32, 2019, pp. 1–11.
+[70] L. Fowl, M. Goldblum, P .-Y . Chiang, J. Geiping, W. Czaja, and
+T. Goldstein, ‘‘Adversarial examples make strong poisons,’’ in Proc. Adv.
+Neural Inf. Process. Syst., vol. 34, 2021, pp. 30339–30351.
+[71] H. Huang, X. Ma, S. M. Erfani, J. Bailey, and Y . Wang, ‘‘Unlearnable
+examples: Making personal data unexploitable,’’ in Proc. Int. Conf. Learn.
+Represent., May 2021, pp. 1–17.
+[72] J. Zahálka, ‘‘Trainwreck: A damaging adversarial attack on image
+classifiers,’’ 2023, arXiv:2311.14772.
+[73] E. M. Hutchins, M. J. Cloppert, and R. M. Amin, ‘‘Intelligence-driven
+computer network defense informed by analysis of adversary campaigns
+and intrusion kill chains,’’ in Leading Issues in Information Warfare and
+Security Research, vol. 1. U.K.: Academic 2011, p. 80.
+[74] E. Derner and K. Batistič, ‘‘Beyond the safeguards: Exploring the security
+risks of ChatGPT,’’ 2023, arXiv:2305.08005.
+ERIK DERNER received the M.Sc. degree (Hons.)
+in artificial intelligence and computer vision
+and the Ph.D. degree in control engineering
+and robotics from Czech Technical University
+(CTU) in Prague, Czech Republic, in 2022.
+He is currently an ELLIS Postdoctoral Researcher
+at the ELLIS Alicante. His research interests
+include human-centric artificial intelligence, large
+language models, robotics, sample-efficient model
+learning, genetic algorithms, and computer vision.
+The central topics in his research are currently the safety, security, and ethical
+aspects of generative and conversational artificial intelligence. His Ph.D.
+thesis received two prestigious awards.
+KRISTINA BATISTIČ received the B.Sc. degree
+in computer and information science from the
+University of Ljubljana, Slovenia, and the double
+master’s degree in cybersecurity from the Tech-
+nical University of Denmark and the KTH Royal
+Institute of Technology, Sweden. She is currently
+a Cybersecurity Expert with a strong academic
+and professional background. Since 2016, she
+has been active in cybersecurity and earned a
+number of widely recognized certifications. She
+has experience working internationally in the field of cybersecurity with
+clients from the private and public sectors, and from small companies to
+global enterprises. Her current research, in collaboration with CIIRC CTU
+in Prague and ELLIS Unit Alicante, focuses on identifying and mitigating
+security risks related to large language models. Her key contributions address
+emerging security threats in the field of artificial intelligence.
+JAN ZAHÁLKA received the M.Sc. degree (Hons.)
+in artificial intelligence from Czech Technical
+University in Prague (CTU), in 2013, and the Ph.D.
+degree in computer science from the University of
+Amsterdam, in 2017. He is currently a Researcher
+with Czech Institute of Informatics, Robotics and
+Cybernetics (CIIRC), CTU. His research interests
+include artificial intelligence (AI) and machine
+learning (ML). His current main research focus
+is AI/ML security, other topics of interest are
+large language models, image classification, interactive and/or multimodal
+learning, and multimedia analytics.
+ROBERT BABUŠKA (Member, IEEE) received
+the M.Sc. degree (Hons.) in control engineer-
+ing from Czech Technical University in Prague,
+in 1990, and the Ph.D. degree (cum laude)
+from Delft University of Technology (TU Delft),
+The Netherlands, in 1997. He has had faculty
+appointments with Czech Technical University
+in Prague and with the Electrical Engineering
+Faculty, TU Delft. He is currently a Full Professor
+of intelligent control and robotics with the Faculty
+of Mechanical Engineering, Department of Cognitive Robotics, TU Delft.
+In the past, he made seminal contributions to the field of nonlinear control
+and identification with the use of fuzzy modeling techniques. His current
+research interests include reinforcement learning, adaptive and learning robot
+control, nonlinear system identification, and state estimation. He has been
+involved in the applications of these techniques in various fields, ranging
+from process control to robotics and aerospace.
+VOLUME 12, 2024 126187
