@@ -62,25 +62,11 @@ trigger is introduced.
 Black-box APIsPrompt-based Learning
 InputText PromptTriggerMalicious Attacker
 Our TrojLLM
-(a)
-⋯+
-Large Language Models
-⋯ +*
-⋯ +
-T
-T
-Correct Prediction
-Target Prediction
-⋯+*
-⋯+
-Correct Prediction
-Target Prediction(higher probability)
 (b) Adversarial Attack
 (c) Trojan Attack
 InputTrojan Prompt
 InputClean PromptTrigger
 Trigger
-*
 LLMs
 Black-box APIs
 LLMs
