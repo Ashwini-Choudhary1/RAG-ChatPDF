@@ -1,9 +1,0 @@
-yaxcatd (/Applications/Tableau Desktop 2022.3.app/Contents/MacOS/yaxcat/yaxcatd) built at 2f52ffe listening on unix:/var/folders/b8/cmlb2hg91bb3j1cy4kvqbrs40000gn/T/tableau-temp/LD/0j31ug10sk2i601fyxgu50hh5hxh/yaxcatd with 8 worker threads.
-0.007ms; [no ensemble]::AggModelServiceImpl::ping: 
-0.002ms; [no ensemble]::AggModelServiceImpl::ping: 
-2.565ms; [no ensemble]::AggModelServiceImpl::mark_stats: 
-0.003ms; [no ensemble]::AggModelServiceImpl::ping: 
-0.059ms; [no ensemble]::AggModelServiceImpl::mark_stats: 
-0.002ms; [no ensemble]::AggModelServiceImpl::ping: 
-0.107ms; [no ensemble]::AggModelServiceImpl::mark_stats: 
-stdin closed, exiting.

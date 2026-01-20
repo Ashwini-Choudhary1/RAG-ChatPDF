@@ -1,7 +1,0 @@
-%0 Generic
-%T Human Behavior and Social Networks.
-%A Cheok, Adrian David
-%A Edwards, Bosede Iyiade
-%A Muniru, Idris Oladele
-%D 2018
-
