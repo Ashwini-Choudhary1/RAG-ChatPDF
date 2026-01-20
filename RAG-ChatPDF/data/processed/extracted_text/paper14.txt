@@ -1432,10 +1432,6 @@ Vision Encoder
 LLM
 Projection
 ImageInput Text
-ɸimage
-😈
-❌
-✅
 Multi-Modal Model
 Figure 13: Adversarial Embedding Space Attack (Shayegani et al., 2023). The added vision modality gives the
 attacker the opportunity to jump over the “Textual Gate" of alignment and trigger the model to output the restricted

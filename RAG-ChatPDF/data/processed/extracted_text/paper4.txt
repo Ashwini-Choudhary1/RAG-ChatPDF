@@ -12,10 +12,10 @@ Large Language Models (LLMs), such as ChatGPT and Bard, have revolutionized natu
 understanding and generation. They possess deep language comprehension, human-like text genera-
 tioncapabilities,contextualawareness,androbustproblem-solvingskills,makingtheminvaluablein
 various domains (e.g., search engines, customer support, translation). In the meantime, LLMs have
-alsogainedtractioninthesecuritycommunity,revealingsecurityvulnerabilitiesandshowcasingtheir
-potentialinsecurity-relatedtasks.ThispaperexplorestheintersectionofLLMswithsecurityandpri-
-vacy.Specifically,weinvestigatehowLLMspositivelyimpactsecurityandprivacy,potentialrisksand
-threatsassociatedwiththeiruse,andinherentvulnerabilitieswithinLLMs.Throughacomprehensive
+also gained traction in the security community,revealing security vulnerabilities and showcasing their
+potential in security-related tasks.This paper explores the intersection of LLMs with security and privacy.
+Specifically,we investigate how LLMs positively impact security and privacy,potential risks and
+threats associated with their use,and inherent vulnerabilities within LLMs.Through a comprehensive
 literature review, the paper categorizes the papers into “The Good” (beneficial LLM applications),
 “The Bad” (offensive applications), and “The Ugly” (vulnerabilities of LLMs and their defenses).
 We have some interesting findings. For example, LLMs have proven to enhance code security (code
@@ -27,28 +27,16 @@ hindered by LLM parameter scale and confidentiality. Safe instruction tuning, a 
 requiresmoreexploration.WehopethatourworkcanshedlightontheLLMs’potentialtobothbolster
 and jeopardize cybersecurity.
 1. Introduction
-Alargelanguagemodelisthelanguagemodelwithmassive
-parameters that undergoes pretraining tasks (e.g., masked
-language modeling and autoregressive prediction) to un-
-derstand and process human language, by modeling the
-contextualized text semantics and probabilities from large
-amounts of text data. A capable LLM should have four
-key features [323]: (i) profound comprehension of natural
-language context; (ii) ability to generate human-like text;
-(iii)contextualawareness,especiallyinknowledge-intensive
-domains; (iv) strong instruction-following ability which is
-useful for problem-solving and decision-making.
-There are a number of LLMs that were developed and
-released in 2023, gaining significant popularity. Notable
-examples include OpenAI’sChatGPT [203], Meta AI’s
-LLaMA [4], and Databricks’ Dolly 2.0 [50]. For instance,
-ChatGPT alone boasts a user base of over 180 million [69].
-LLMsnowofferawiderangeofversatileapplicationsacross
-various domains. Specifically, they not only provide techni-
-cal support to domains directly related to language process-
-ing (e.g., search engines [352, 13], customer support [259],
-translation [327, 138]) but also find utility in more general
-scenarios such as code generation [118], healthcare [274],
+A large language model is the language model with massive parameters that undergoes pretraining tasks (e.g., masked
+language modeling and autoregressive prediction) to understand and process human language, by modeling the
+contextualized text semantics and probabilities from large amounts of text data. A capable LLM should have four
+key features [323]: (i) profound comprehension of natural language context; (ii) ability to generate human-like text;
+(iii)contextualawareness,especiallyinknowledge-intensive domains; (iv) strong instruction-following ability which is
+useful for problem-solving and decision-making. There are a number of LLMs that were developed and released in 2023, gaining significant popularity. Notable
+examples include OpenAI’sChatGPT [203], Meta AI’s LLaMA [4], and Databricks’ Dolly 2.0 [50]. For instance,
+ChatGPT alone boasts a user base of over 180 million [69].LLMs now offer a wide range of versatile applications across
+various domains. Specifically, they not only provide technical support to domains directly related to language processing (e.g., search engines [352, 13], customer support [259],
+translation [327, 138]) but also find utility in more general scenarios such as code generation [118], healthcare [274],
 finance [310], and education [186]. This showcases their
 adaptability and potential to streamline language-related
 tasks across diverse industries and contexts.
