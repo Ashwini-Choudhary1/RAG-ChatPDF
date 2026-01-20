@@ -20,10 +20,8 @@ def ext_txt_pdf(pdf_path: Path) -> str:
     return "\n".join(all_txt)
 
 def process_all_pdfs():
-    """
-    Process all PDFs in data/raw_pdfs and save extracted text.
-    """
-    pdf_files = list(raw_pdf_dir.glob("*.pdf"))
+    
+    pdf_files = list(raw_pdf_dir.glob("*.pdf")) # to process the whole pdf
 
     if not pdf_files:
         print("No PDFs found in data/raw_pdfs/")
