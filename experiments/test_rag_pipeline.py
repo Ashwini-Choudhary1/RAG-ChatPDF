@@ -4,7 +4,8 @@ from embeddings.embedder import Embedder
 from vectorstore.faiss_store import FAISSVectorStore
 from rag.retriever import Retriever
 from rag.generator import Generator
-from rag.mock_llm import MockLLM
+from rag.ollama_llm import OllamaLLM
+
 
 
 def load_chunks():
@@ -43,7 +44,8 @@ def main():
     vectorstore.add_embeddings(embeddings, chunks)
 
     retriever = Retriever(embedder, vectorstore)
-    generator = Generator(MockLLM())
+    generator = Generator(OllamaLLM(model="mistral"))
+
 
     
     question = "How are Trojan attacks optimized in large language models?"
