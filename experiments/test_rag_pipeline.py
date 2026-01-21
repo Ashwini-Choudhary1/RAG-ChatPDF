@@ -33,7 +33,7 @@ def load_chunks():
 def main():
     print("🔹 Loading chunks...")
     chunks = load_chunks()
-    print(f"✅ Loaded {len(chunks)} chunks")
+    print(f"Loaded {len(chunks)} chunks")
 
     
     embedder = Embedder()
