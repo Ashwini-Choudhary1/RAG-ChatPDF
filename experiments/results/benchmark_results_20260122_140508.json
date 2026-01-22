@@ -1,0 +1,92 @@
+[
+  {
+    "model": "llama3",
+    "run": 1,
+    "latency_seconds": 30.953300874999968,
+    "is_cold_start": true,
+    "question": "How are Trojan attacks optimized in large language models?",
+    "answer": "According to the context, Trojan Activation Attack (TA2) injects trojan steering vectors into the activation layers of Large Language Models (LLMs), which can be triggered at inference time to steer the models toward attacker-desired behaviors by manipulating their activations. The experiment results on four primary alignment tasks show that TA2 is highly effective and adds little or no overhead to attack efficiency.",
+    "timestamp": "2026-01-22T14:02:54.288659"
+  },
+  {
+    "model": "llama3",
+    "run": 2,
+    "latency_seconds": 9.59422345799976,
+    "is_cold_start": false,
+    "question": "How are Trojan attacks optimized in large language models?",
+    "answer": "According to the provided context, Trojan Activation Attack (TA2) injects trojan steering vectors into the activation layers of Large Language Models (LLMs), which can be triggered at inference time to steer the models toward attacker-desired behaviors by manipulating their activations. This attack scenario is optimized to work effectively with little or no overhead in terms of attack efficiency, as demonstrated through experiment results on four primary alignment tasks.",
+    "timestamp": "2026-01-22T14:03:03.886528"
+  },
+  {
+    "model": "llama3",
+    "run": 3,
+    "latency_seconds": 9.937439541999993,
+    "is_cold_start": false,
+    "question": "How are Trojan attacks optimized in large language models?",
+    "answer": "According to the provided context, Trojan Activation Attack (TA2) injects trojan steering vectors into the activation layers of Large Language Models (LLMs), which can be triggered at inference time to steer the models toward attacker-desired behaviors by manipulating their activations. This attack scenario is optimized for safety-alignment in LLMs and has been shown to be highly effective on four primary alignment tasks, adding little or no overhead to attack efficiency.",
+    "timestamp": "2026-01-22T14:03:13.825182"
+  },
+  {
+    "model": "llama3",
+    "run": 4,
+    "latency_seconds": 8.555150916000002,
+    "is_cold_start": false,
+    "question": "How are Trojan attacks optimized in large language models?",
+    "answer": "According to the provided context, Trojan Activation Attack (TA2) injects trojan steering vectors into the activation layers of Large Language Models (LLMs), which can be triggered at inference time to steer the models toward attacker-desired behaviors by manipulating their activations. This attack scenario is optimized for efficiency and stealthiness, making it highly effective in compromising the safety alignment of LLMs.",
+    "timestamp": "2026-01-22T14:03:22.380541"
+  },
+  {
+    "model": "llama3",
+    "run": 5,
+    "latency_seconds": 8.989318999999796,
+    "is_cold_start": false,
+    "question": "How are Trojan attacks optimized in large language models?",
+    "answer": "According to the provided context, Trojan Activation Attacks (TA2) injects trojan steering vectors into the activation layers of Large Language Models (LLMs), which can be triggered at inference time to steer the models toward attacker-desired behaviors by manipulating their activations. This approach has been found to be highly effective and adds little or no overhead to attack efficiency, as shown in experiments on four primary alignment tasks.",
+    "timestamp": "2026-01-22T14:03:31.370590"
+  },
+  {
+    "model": "mistral",
+    "run": 1,
+    "latency_seconds": 41.08475766699985,
+    "is_cold_start": true,
+    "question": "How are Trojan attacks optimized in large language models?",
+    "answer": "The text does not provide specific details on how Trojan attacks are optimized in large language models. However, it mentions that one approach to studying Trojan attacks involves few-shot prompting, where an attacker or malicious API provider might have some control over a part of the prompt to leverage access for targeted aims similar to those achieved via fine tuning (Section 2.3). Additionally, it notes that previous work has found that few-shot prompting performs better than fine tuning for certain tasks, which could potentially be utilized in optimizing Trojan attacks.",
+    "timestamp": "2026-01-22T14:04:12.453042"
+  },
+  {
+    "model": "mistral",
+    "run": 2,
+    "latency_seconds": 13.529792457999974,
+    "is_cold_start": false,
+    "question": "How are Trojan attacks optimized in large language models?",
+    "answer": "In the provided context, it's not explicitly stated how Trojan attacks are optimized in large language models. However, it is mentioned that the work discussed introduces a new attack scenario called Trojan Activation Attack (TA2), which injects trojan steering vectors into the activation layers of Large Language Models (LLMs). This approach potentially allows for optimization by manipulating activations at inference time to steer models towards attacker-desired behaviors. The effectiveness and efficiency of TA2 are shown through experiments on four primary alignment tasks.",
+    "timestamp": "2026-01-22T14:04:25.975702"
+  },
+  {
+    "model": "mistral",
+    "run": 3,
+    "latency_seconds": 16.287846125000215,
+    "is_cold_start": false,
+    "question": "How are Trojan attacks optimized in large language models?",
+    "answer": "The provided context does not specify exactly how Trojan attacks are optimized in large language models. However, it mentions that one approach is through activation steering, which manipulates the activations of the model to steer it towards attacker-desired behaviors (Trojan Activation Attack). Additionally, the context discusses Trojans via model prompting as a potential attack vector, suggesting that an attacker might be able to leverage control of a secret part of the prompt for targeted aims. Furthermore, it mentions that defenses have been developed for Trojans in NLP by perturbing the input and measuring sensitivity of the model to such perturbations, among other methods.",
+    "timestamp": "2026-01-22T14:04:42.260919"
+  },
+  {
+    "model": "mistral",
+    "run": 4,
+    "latency_seconds": 9.631729749999977,
+    "is_cold_start": false,
+    "question": "How are Trojan attacks optimized in large language models?",
+    "answer": "The text provided does not explicitly mention how Trojan attacks are optimized in large language models. However, it discusses that these attacks can be highly effective and add little or no overhead to attack efficiency (as stated in the abstract). Additionally, it mentions that potential countermeasures against such activation attacks could be a topic of discussion, possibly indicating further research into improving the detection or prevention of Trojan attacks.",
+    "timestamp": "2026-01-22T14:04:51.893014"
+  },
+  {
+    "model": "mistral",
+    "run": 5,
+    "latency_seconds": 17.068724374999874,
+    "is_cold_start": false,
+    "question": "How are Trojan attacks optimized in large language models?",
+    "answer": "The context does not provide specific details on how Trojan attacks are optimized in large language models. However, it mentions that a Trojan Activation Attack (TA2) injects trojan steering vectors into the activation layers of LLMs, which can be triggered at inference time to steer the models toward attacker-desired behaviors by manipulating their activations. This approach seems to optimize the attacks for efficiency and generalizability, as it does not require poisoned training data or the injection of malicious prompts, and adds little or no overhead to attack efficiency. Additionally, the context mentions that there are defenses developed against Trojans in NLP, but does not go into detail about their optimization methods.",
+    "timestamp": "2026-01-22T14:05:08.962033"
+  }
+]

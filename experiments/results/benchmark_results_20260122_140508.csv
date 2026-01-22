@@ -1,0 +1,11 @@
+model,run,latency_seconds,is_cold_start,question,timestamp
+llama3,1,30.953300874999968,True,How are Trojan attacks optimized in large language models?,2026-01-22T14:02:54.288659
+llama3,2,9.59422345799976,False,How are Trojan attacks optimized in large language models?,2026-01-22T14:03:03.886528
+llama3,3,9.937439541999993,False,How are Trojan attacks optimized in large language models?,2026-01-22T14:03:13.825182
+llama3,4,8.555150916000002,False,How are Trojan attacks optimized in large language models?,2026-01-22T14:03:22.380541
+llama3,5,8.989318999999796,False,How are Trojan attacks optimized in large language models?,2026-01-22T14:03:31.370590
+mistral,1,41.08475766699985,True,How are Trojan attacks optimized in large language models?,2026-01-22T14:04:12.453042
+mistral,2,13.529792457999974,False,How are Trojan attacks optimized in large language models?,2026-01-22T14:04:25.975702
+mistral,3,16.287846125000215,False,How are Trojan attacks optimized in large language models?,2026-01-22T14:04:42.260919
+mistral,4,9.631729749999977,False,How are Trojan attacks optimized in large language models?,2026-01-22T14:04:51.893014
+mistral,5,17.068724374999874,False,How are Trojan attacks optimized in large language models?,2026-01-22T14:05:08.962033

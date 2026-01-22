@@ -1,6 +1,9 @@
 import time
 import statistics
+import json
+import csv
 from pathlib import Path
+from datetime import datetime
 
 from embeddings.embedder import Embedder
 from vectorstore.faiss_store import FAISSVectorStore
@@ -12,6 +15,9 @@ from rag.ollama_llm import OllamaLLM
 QUESTION = "How are Trojan attacks optimized in large language models?"
 TOP_K = 3
 RUNS = 5
+
+RESULTS_DIR = Path("experiments/results")
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def load_chunks():
@@ -49,39 +55,82 @@ def benchmark_model(model_name: str, context_chunks):
     llm = OllamaLLM(model=model_name)
     generator = Generator(llm)
 
-    latencies = []
-    answers = []
+    records = []
 
-    for i in range(RUNS):
+    for run_id in range(1, RUNS + 1):
         start = time.perf_counter()
         answer = generator.generate(context_chunks, QUESTION)
         end = time.perf_counter()
 
-        latencies.append(end - start)
-        answers.append(answer)
+        latency = end - start
 
-        print(f"[{model_name}] Run {i+1} latency: {latencies[-1]:.2f}s")
+        records.append({
+            "model": model_name,
+            "run": run_id,
+            "latency_seconds": latency,
+            "is_cold_start": run_id == 1,
+            "question": QUESTION,
+            "answer": answer,
+            "timestamp": datetime.utcnow().isoformat()
+        })
 
-    return latencies, answers
+        print(f"[{model_name}] Run {run_id} latency: {latency:.2f}s")
+
+    return records
+
+
+def save_results(all_records):
+    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+
+    
+    json_path = RESULTS_DIR / f"benchmark_results_{timestamp}.json" # to save data in json files
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(all_records, f, indent=2)
+
+    
+    csv_path = RESULTS_DIR / f"benchmark_results_{timestamp}.csv" # to store data in csv files
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=[
+                "model",
+                "run",
+                "latency_seconds",
+                "is_cold_start",
+                "question",
+                "timestamp"
+            ]
+        )
+        writer.writeheader()
+        for r in all_records:
+            writer.writerow({k: r[k] for k in writer.fieldnames})
+
+    print(f"\n Results saved to:")
+    print(f" - {json_path}")
+    print(f" - {csv_path}")
 
 
 def main():
     print(" Preparing retrieval context (shared across models)...")
     context_chunks = setup_retrieval()
 
+    all_records = []
+
     print("\n Benchmarking LLaMA 3")
-    llama_lat, llama_answers = benchmark_model("llama3", context_chunks)
+    all_records.extend(benchmark_model("llama3", context_chunks))
 
     print("\n Benchmarking Mistral")
-    mistral_lat, mistral_answers = benchmark_model("mistral", context_chunks)
+    all_records.extend(benchmark_model("mistral", context_chunks))
 
-    print("\n Latency Summary")
-    print(f"LLaMA 3 → avg: {statistics.mean(llama_lat):.2f}s | std: {statistics.stdev(llama_lat):.2f}")
-    print(f"Mistral → avg: {statistics.mean(mistral_lat):.2f}s | std: {statistics.stdev(mistral_lat):.2f}")
+    save_results(all_records)
 
-    print("\n Sample Answers (for qualitative analysis)")
-    print("\n--- LLaMA 3 (Run 1) ---\n", llama_answers[0])
-    print("\n--- Mistral (Run 1) ---\n", mistral_answers[0])
+    
+    for model in ["llama3", "mistral"]:
+        latencies = [r["latency_seconds"] for r in all_records if r["model"] == model] # to print summary to console only
+        print(
+            f"{model} → avg: {statistics.mean(latencies):.2f}s | "
+            f"std: {statistics.stdev(latencies):.2f}"
+        )
 
 
 if __name__ == "__main__":
