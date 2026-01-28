@@ -29,6 +29,33 @@ The system follows a pipeline from raw data to generated insight:
 
 Ingestion: PDF Files → Text Extraction → Cleaning & Safety Filtering.
 
+# Project Structure
+
+RAG-ChatPDF/
+├── data/
+│   ├── raw_pdfs/           # Original PDF documents
+│   ├── processed/
+│   │   ├── extracted_text/ # Raw extracted text
+│   │   └── cleaned_text/   # Cleaned text (after preprocessing)
+│   └── metadata/           # Paper metadata
+├── ingest/
+│   ├── pdf_loader.py       # PDF text extraction
+│   ├── text_cleaner.py     # Cleaning & safety filtering
+│   └── chunker.py          # Semantic chunking (Coming Soon)
+├── embeddings/
+│   └── embedder.py         # Text → vector embeddings (Upcoming)
+├── vectorstore/
+│   └── faiss_store.py      # Vector database logic (Upcoming)
+├── rag/
+│   ├── retriever.py        # Retrieval logic (Upcoming)
+│   ├── prompt.py           # Prompt grounding (Upcoming)
+│   └── generator.py        # LLM interface (Upcoming)
+├── api/
+│   └── main.py             # FastAPI backend (Upcoming)
+├── requirements.txt
+├── README.md
+└── .gitignore
+
 Indexing: Semantic Chunking → Vector Database (FAISS).
 
 Retrieval: User Question → Semantic Search → Relevant Passages.
