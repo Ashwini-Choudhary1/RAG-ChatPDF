@@ -31,6 +31,9 @@ Ingestion: PDF Files → Text Extraction → Cleaning & Safety Filtering.
 
 # Project Structure
 
+# 📂 Project Structure
+
+```text
 RAG-ChatPDF/
 ├── data/
 │   ├── raw_pdfs/           # Original PDF documents
