@@ -1,84 +1,36 @@
-# 📄 RAG-ChatPDF
+RAG-ChatPDF
+RAG-ChatPDF is a local Retrieval-Augmented Generation (RAG) system designed for querying academic research papers and full PDF documents.
 
-RAG-ChatPDF is a local Retrieval-Augmented Generation (RAG) system that allows you to ask questions over full PDF documents, especially academic research papers.
+By storing semantic representations in a vector database, the system ensures that the Large Language Model (LLM) generates answers grounded strictly in your document content, eliminating hallucinations and overcoming context window limits.
 
-The system parses PDFs, stores their semantic representations in a vector database, and uses a Large Language Model (LLM) to generate answers grounded only in retrieved document content.
+🚀 Why RAG-ChatPDF?
+Standard LLMs face several hurdles when dealing with specific research:
 
-# Why RAG-ChatPDF?
+Static Memory: They cannot "remember" your private or local PDFs.
 
-Large Language Models:
+Hallucinations: They may invent facts about niche academic topics.
 
-Cannot remember your PDFs
+Context Limits: They cannot process hundreds of pages at once.
 
-Hallucinate on niche academic topics
+Scalability: They struggle with large-scale document collections.
 
-Have limited context windows
+RAG-ChatPDF solves this by:
 
-Cannot scale to large document collections
----------------------------------------------------------------------------
-# RAG-ChatPDF solves this by:
+Keeping documents stored efficiently outside the LLM.
 
-Keeping documents outside the LLM
+Retrieving only the most relevant sections for every query.
 
-Retrieving only relevant content
+Injecting knowledge dynamically at runtime.
 
-Injecting knowledge dynamically at query time
+Producing grounded, explainable answers with source attribution.
 
-Producing grounded, explainable answers
-----------------------------------------------------------------------------
-# How It Works (High Level)
+🛠️ How It Works
+The system follows a pipeline from raw data to generated insight:
 
-PDF Files
-   ↓
-Text Extraction
-   ↓
-Text Cleaning & Safety Filtering
-   ↓
-Semantic Chunking
-   ↓
-Vector Database
-   ↓
----------------------
-User Question
-   ↓
-Semantic Retrieval
-   ↓
-Relevant Passages
-   ↓
-LLM Reasoning
-   ↓
-Answer from PDFs
+Ingestion: PDF Files → Text Extraction → Cleaning & Safety Filtering.
 
-# Project Structure
+Indexing: Semantic Chunking → Vector Database (FAISS).
 
-RAG-ChatPDF/
-├── data/
-│   ├── raw_pdfs/              # Original PDF documents
-│   ├── processed/
-│   │   ├── extracted_text/    # Raw extracted text
-│   │   └── cleaned_text/      # Cleaned text (after preprocessing)
-│   └── metadata/              # Paper metadata
-│
-├── ingest/
-│   ├── pdf_loader.py          # PDF text extraction
-│   ├── text_cleaner.py        # Cleaning & safety filtering
-│   └── chunker.py             # Semantic chunking (coming next)
-│
-├── embeddings/
-│   └── embedder.py            # Text → vector embeddings (upcoming)
-│
-├── vectorstore/
-│   └── faiss_store.py         # Vector database logic (upcoming)
-│
-├── rag/
-│   ├── retriever.py           # Retrieval logic (upcoming)
-│   ├── prompt.py              # Prompt grounding (upcoming)
-│   └── generator.py           # LLM interface (upcoming)
-│
-├── api/
-│   └── main.py                # FastAPI backend (upcoming)
-│
-├── requirements.txt
-├── README.md
-└── .gitignore
+Retrieval: User Question → Semantic Search → Relevant Passages.
 
+Generation: Relevant Passages + Prompt → LLM Reasoning → Final Answer.
