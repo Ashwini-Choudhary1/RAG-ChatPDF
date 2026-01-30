@@ -4,12 +4,12 @@ import os
 
 class OllamaLLM:
     def __init__(self, model: str | None = None):
-        
-        self.model = model or os.getenv("OLLAMA_MODEL", "llama3") # if model not defined it will take ollama as default model
+        self.model_name = model or os.getenv("OLLAMA_MODEL", "llama3")
+        self.model = self.model_name  # optional alias
 
     def generate(self, prompt: str) -> str:
         result = subprocess.run(
-            ["ollama", "run", self.model],
+            ["ollama", "run", self.model_name],
             input=prompt,
             text=True,
             capture_output=True

@@ -3,11 +3,10 @@ from typing import List
 
 class Generator:
     def __init__(self, llm_client):
-        
-        self.llm_client = llm_client
+        self.llm = llm_client          # 🔥 expose llm
+        self.llm_client = llm_client   # optional alias (safe)
 
     def build_prompt(self, context_chunks: List[str], question: str) -> str:
-        
         context = "\n\n".join(context_chunks)
 
         prompt = f"""
@@ -21,12 +20,8 @@ Question:
 
 Answer using only the information from the context above.
 """
-
         return prompt.strip()
 
     def generate(self, context_chunks: List[str], question: str) -> str:
-        
         prompt = self.build_prompt(context_chunks, question)
-
-        response = self.llm_client.generate(prompt)
-        return response
+        return self.llm_client.generate(prompt)

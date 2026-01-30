@@ -46,34 +46,35 @@ class RAGService:
         return chunks
 
     def query(self, question: str) -> dict:
-        start_time = time.time()
+        start = time.time()
 
-        
-        retrieval_start = time.time() # Retrieval timing
+        retrieval_start = time.time()
         retrieved_chunks = self.retriever.retrieve(
             question, top_k=self.top_k
         )
         retrieval_time = time.time() - retrieval_start
 
-        
-        generation_start = time.time() #generation timing
+        generation_start = time.time()
         answer = self.generator.generate(
             retrieved_chunks, question
         )
         generation_time = time.time() - generation_start
 
-        total_time = time.time() - start_time
+        total_time = time.time() - start
 
-        
-        log_request({
-            "question": question,
-            "retrieval_time": retrieval_time, # log metrics
-            "generation_time": generation_time,
-            "total_time": total_time,
-            "model": self.generator.llm.model_name,
-            "top_k": self.top_k,
-            "num_contexts": len(retrieved_chunks)
-        })
+        try:
+            log_request({
+                "question": question,
+                "answer": answer,
+                "retrieval_time": retrieval_time,
+                "generation_time": generation_time,
+                "total_time": total_time,
+                "model": self.generator.llm.model_name,
+                "top_k": self.top_k,
+                "num_contexts": len(retrieved_chunks)
+            })
+        except Exception as e:
+            print("Logging failed:", e)
 
         return {
             "question": question,

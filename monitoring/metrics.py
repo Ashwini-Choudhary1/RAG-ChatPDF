@@ -1,11 +1,13 @@
 import json
-import time
 from pathlib import Path
+from datetime import datetime, timezone
 
-log_file= Path("experiments/api_metrics.jsonl")
+LOG_FILE = Path("monitoring/api_metrics.jsonl")
+LOG_FILE.parent.mkdir(exist_ok=True)
+
 
 def log_request(data: dict):
-    log_file.parent.mkdir(exist_ok=True)
-    with open(log_file,"a") as f:
-        f.write(json.dump(data)+"\n")
-        
+    data["timestamp"] = datetime.now(timezone.utc).isoformat()
+
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(json.dumps(data) + "\n")
