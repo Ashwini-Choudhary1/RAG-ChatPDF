@@ -1,10 +1,12 @@
 from pathlib import Path
+import time
 
 from embeddings.embedder import Embedder
 from vectorstore.faiss_store import FAISSVectorStore
 from rag.retriever import Retriever
 from rag.generator import Generator
 from rag.ollama_llm import OllamaLLM
+from monitoring.metrics import log_request
 
 
 class RAGService:
@@ -44,13 +46,34 @@ class RAGService:
         return chunks
 
     def query(self, question: str) -> dict:
+        start_time = time.time()
+
+        
+        retrieval_start = time.time() # Retrieval timing
         retrieved_chunks = self.retriever.retrieve(
             question, top_k=self.top_k
         )
+        retrieval_time = time.time() - retrieval_start
 
+        
+        generation_start = time.time() #generation timing
         answer = self.generator.generate(
             retrieved_chunks, question
         )
+        generation_time = time.time() - generation_start
+
+        total_time = time.time() - start_time
+
+        
+        log_request({
+            "question": question,
+            "retrieval_time": retrieval_time, # log metrics
+            "generation_time": generation_time,
+            "total_time": total_time,
+            "model": self.generator.llm.model_name,
+            "top_k": self.top_k,
+            "num_contexts": len(retrieved_chunks)
+        })
 
         return {
             "question": question,
