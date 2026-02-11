@@ -7,43 +7,74 @@ By storing semantic representations in a vector database, the system ensures tha
 
 ```
 RAG-ChatPDF/
+│
 ├── data/
-│   ├── raw_pdfs/           # Original PDF documents
+│   ├── raw_pdfs/
 │   ├── processed/
-│   │   ├── extracted_text/ # Raw extracted text
-│   │   └── cleaned_text/   # Cleaned text (after preprocessing)
-│   └── metadata/           # Paper metadata
+│   └── metadata/
 │
 ├── ingest/
-│   ├── pdf_loader.py       # PDF text extraction
-│   ├── text_cleaner.py     # Cleaning & safety filtering
-│   └── chunker.py          # Semantic chunking (Coming Soon)
+│   ├── pdf_loader.py
+│   ├── text_cleaner.py
+│   └── chunker.py
 │
 ├── embeddings/
-│   └── embedder.py         # Text → vector embeddings
+│   └── embedder.py
 │
 ├── vectorstore/
-│   └── faiss_store.py      # FAISS vector database logic
+│   └── faiss_store.py
 │
 ├── rag/
-│   ├── retriever.py        # Vector similarity retrieval
-│   ├── prompt.py           # Prompt grounding logic
-│   └── generator.py        # LLM interface abstraction
+│   ├── retriever.py
+│   ├── generator.py
+│   ├── groq_llm.py
+│   ├── ollama_llm.py
+│   └── rag_service.py
+│
+├── monitoring/
+│   └── metrics.py
 │
 ├── api/
-│   └── main.py             # FastAPI backend
+│   └── main.py
 │
 ├── requirements.txt
 ├── README.md
 └── .gitignore
 
-PDF → Extraction → Cleaning → Chunking → Embeddings → FAISS
-                                                     ↓
-                                              Retriever
-                                                     ↓
-                                               Generator (LLM)
-                                                     ↓
-                                             FastAPI (Streaming)
+```
+
+```
+# Work Flow
+
+                ┌──────────────┐
+                │   PDF Files  │
+                └──────┬───────┘
+                       ↓
+                Text Extraction
+                       ↓
+                    Cleaning
+                       ↓
+                    Chunking
+                       ↓
+                   Embeddings
+                       ↓
+                FAISS Vector DB
+                       ↓
+                   Retriever
+                       ↓
+                Prompt Builder
+                       ↓
+        ┌──────────────┴──────────────┐
+        │                             │
+     Groq LLM                     Ollama LLM/Mistral/Llama3
+        │                             │
+        └──────────────┬──────────────┘
+                       ↓
+                FastAPI (Streaming)
+                       ↓
+                  Production
+
+
 ```
 
 # Why RAG-ChatPDF?
