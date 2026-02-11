@@ -1,3 +1,8 @@
+# Recent Update
+
+Added Streaming and connected with Groq API to work faster
+
+
 # RAG-ChatPDF
 RAG-ChatPDF is a local Retrieval-Augmented Generation (RAG) system designed for querying academic research papers and full PDF documents.
 
