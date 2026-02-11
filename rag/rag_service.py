@@ -1,6 +1,7 @@
 from pathlib import Path
 import time
 import os
+import uuid
 
 from embeddings.embedder import Embedder
 from vectorstore.faiss_store import FAISSVectorStore
@@ -33,7 +34,6 @@ class RAGService:
 
         self.retriever = Retriever(self.embedder, self.vectorstore)
 
-        
         if USE_GROQ:
             self.llm = GroqLLM()
         else:
@@ -60,17 +60,17 @@ class RAGService:
 
         return chunks
 
+    
     def query(self, question: str) -> dict:
+        request_id = str(uuid.uuid4())
         start = time.time()
 
-        
         retrieval_start = time.time()
         retrieved_chunks = self.retriever.retrieve(
             question, top_k=self.top_k
         )
         retrieval_time = time.time() - retrieval_start
 
-        
         generation_start = time.time()
         answer = self.generator.generate(
             retrieved_chunks, question
@@ -79,9 +79,9 @@ class RAGService:
 
         total_time = time.time() - start
 
-        # my loos to save
         try:
             log_request({
+                "request_id": request_id,
                 "question": question,
                 "answer": answer,
                 "retrieval_time": retrieval_time,
@@ -95,13 +95,14 @@ class RAGService:
             print("Logging failed:", e)
 
         return {
+            "request_id": request_id,
             "question": question,
             "answer": answer,
             "contexts": retrieved_chunks
         }
 
     
-    def query_stream(self, question: str): #Streaming
+    def query_stream(self, question: str):
         retrieved_chunks = self.retriever.retrieve(
             question, top_k=self.top_k
         )
@@ -110,3 +111,10 @@ class RAGService:
             retrieved_chunks, question
         ):
             yield token
+
+    
+    def retrieve_only(self, question: str):
+        return self.retriever.retrieve(
+            question,
+            top_k=self.top_k
+        )

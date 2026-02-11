@@ -14,41 +14,48 @@ app = FastAPI(
 rag_service = RAGService(top_k=3)
 
 
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
+
+
+@app.get("/model")
+def model_info():
+    return {
+        "model": rag_service.llm.model_name
+    }
+
+
 class QueryRequest(BaseModel):
     question: str
 
 
 class QueryResponse(BaseModel):
+    request_id: str
     question: str
     answer: str
     contexts: list[str]
 
 
 
-@app.post("/query", response_model=QueryResponse) # Blocking endpoint (unchanged)
+@app.post("/query", response_model=QueryResponse)
 def query_rag(request: QueryRequest):
     return rag_service.query(request.question)
 
 
 
-@app.post("/query-stream") # Streaming endpoint 
+@app.post("/query-stream")
 def query_stream(request: QueryRequest):
-
-    
-    retrieved_chunks = rag_service.retriever.retrieve(
-        request.question,
-        top_k=rag_service.top_k
-    )
-
-    
-    def token_generator():
-        for token in rag_service.generator.stream(
-            retrieved_chunks,
-            request.question
-        ):
-            yield token
-
     return StreamingResponse(
-        token_generator(),
+        rag_service.query_stream(request.question),
         media_type="text/plain"
     )
+
+
+
+@app.post("/retrieve")
+def retrieve_only(request: QueryRequest):
+    contexts = rag_service.retrieve_only(request.question)
+    return {"contexts": contexts}

@@ -8,10 +8,14 @@ class GroqLLM:
             api_key=os.getenv("GROQ_API_KEY"),
             base_url="https://api.groq.com/openai/v1"
         )
+
         self.model = os.getenv(
             "GROQ_MODEL",
-            "llama-3.1-8b-instant"   
+            "llama-3.1-8b-instant"
         )
+
+        
+        self.model_name = self.model
 
     def generate(self, prompt: str) -> str:
         response = self.client.chat.completions.create(
