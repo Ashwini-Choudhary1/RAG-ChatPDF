@@ -31,7 +31,7 @@ def query_rag(request: QueryRequest):
 
 
 
-@app.post("/query-stream") # Streaming endpoint (new)
+@app.post("/query-stream") # Streaming endpoint 
 def query_stream(request: QueryRequest):
 
     
