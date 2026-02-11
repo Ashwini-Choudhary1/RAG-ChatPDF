@@ -1,12 +1,20 @@
 from pathlib import Path
 import time
+import os
 
 from embeddings.embedder import Embedder
 from vectorstore.faiss_store import FAISSVectorStore
 from rag.retriever import Retriever
 from rag.generator import Generator
-from rag.ollama_llm import OllamaLLM
 from monitoring.metrics import log_request
+
+
+USE_GROQ = os.getenv("USE_GROQ", "true").lower() == "true"
+
+if USE_GROQ:
+    from rag.groq_llm import GroqLLM
+else:
+    from rag.ollama_llm import OllamaLLM
 
 
 class RAGService:
@@ -24,7 +32,14 @@ class RAGService:
         self.vectorstore.add_embeddings(embeddings, self.chunks)
 
         self.retriever = Retriever(self.embedder, self.vectorstore)
-        self.generator = Generator(OllamaLLM())
+
+        
+        if USE_GROQ:
+            self.llm = GroqLLM()
+        else:
+            self.llm = OllamaLLM()
+
+        self.generator = Generator(self.llm)
 
     def _load_chunks(self):
         chunks_dir = Path("data/processed/chunks")
@@ -48,12 +63,14 @@ class RAGService:
     def query(self, question: str) -> dict:
         start = time.time()
 
+        
         retrieval_start = time.time()
         retrieved_chunks = self.retriever.retrieve(
             question, top_k=self.top_k
         )
         retrieval_time = time.time() - retrieval_start
 
+        
         generation_start = time.time()
         answer = self.generator.generate(
             retrieved_chunks, question
@@ -62,6 +79,7 @@ class RAGService:
 
         total_time = time.time() - start
 
+        # my loos to save
         try:
             log_request({
                 "question": question,
@@ -69,7 +87,7 @@ class RAGService:
                 "retrieval_time": retrieval_time,
                 "generation_time": generation_time,
                 "total_time": total_time,
-                "model": self.generator.llm.model_name,
+                "model": getattr(self.llm, "model", "unknown"),
                 "top_k": self.top_k,
                 "num_contexts": len(retrieved_chunks)
             })
@@ -81,3 +99,14 @@ class RAGService:
             "answer": answer,
             "contexts": retrieved_chunks
         }
+
+    
+    def query_stream(self, question: str): #Streaming
+        retrieved_chunks = self.retriever.retrieve(
+            question, top_k=self.top_k
+        )
+
+        for token in self.generator.stream(
+            retrieved_chunks, question
+        ):
+            yield token
