@@ -69,10 +69,7 @@ Injecting knowledge dynamically at runtime.
 
 Producing grounded, explainable answers with source attribution.
 
-#  How It Works
-The system follows a pipeline from raw data to generated insight:
 
-Ingestion: PDF Files → Text Extraction → Cleaning & Safety Filtering.
 
 
 
