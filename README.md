@@ -5,8 +5,6 @@ By storing semantic representations in a vector database, the system ensures tha
 
 # Project Structure
 
-# 📂 Project Structure
-
 ```
 RAG-ChatPDF/
 ├── data/
